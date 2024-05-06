@@ -1,4 +1,4 @@
-ipackage com.redhat.coolstore.model;
+package com.redhat.coolstore.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
