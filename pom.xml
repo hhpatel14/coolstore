@@ -6,17 +6,17 @@
   <artifactId>coolstore</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>coolstore-quarkus</name>
-    <properties>
-        <compiler-plugin.version>3.12.1</compiler-plugin.version>
-        <maven.compiler.release>17</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.10.0</quarkus.platform.version>
-        <skipITs>true</skipITs>
-        <surefire-plugin.version>3.2.5</surefire-plugin.version>
-    </properties>
+  <properties>
+    <compiler-plugin.version>3.13.0</compiler-plugin.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version>3.12.3</quarkus.platform.version>
+    <skipITs>true</skipITs>
+    <surefire-plugin.version>3.2.5</surefire-plugin.version>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -62,25 +62,29 @@
       <artifactId>quarkus-flyway</artifactId>
     </dependency>
     <dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-database-postgresql</artifactId>
-    <version>10.12.0</version>
-    <scope>runtime</scope>
-</dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>10.12.0</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-undertow</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-openshift</artifactId>
+      <artifactId>quarkus-messaging</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-messaging</artifactId>
+      <artifactId>quarkus-container-image-docker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-minikube</artifactId>
     </dependency>
   </dependencies>
-    <build>
+   <build>
         <plugins>
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
@@ -93,6 +97,7 @@
                             <goal>build</goal>
                             <goal>generate-code</goal>
                             <goal>generate-code-tests</goal>
+                            <goal>native-image-agent</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -148,7 +153,7 @@
             </activation>
             <properties>
                 <skipITs>false</skipITs>
-                <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
     </profiles>

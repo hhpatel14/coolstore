@@ -1,0 +1,3 @@
+postgresqlUsername: quarkus
+postgresqlPassword: quarkus
+postgresqlDatabase: coolstore
