@@ -5,7 +5,7 @@ oc new-app -e POSTGRESQL_USER=quarkus \
             -e POSTGRESQL_PASSWORD=quarkus \
             -e POSTGRESQL_DATABASE=coolstore \
             openshift/postgresql:latest \
-            --name=coolstore-database
+            --name=postgres
 ``` 
 
 Make sure that you are logged in via terminal to OpenShift via the `oc` command
