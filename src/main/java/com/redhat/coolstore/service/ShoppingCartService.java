@@ -3,8 +3,8 @@ package com.redhat.coolstore.service;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateful;
-import javax.inject.Inject;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,7 +13,7 @@ import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
 
-@Stateful
+@SessionScoped
 public class ShoppingCartService  {
 
     @Inject
@@ -25,13 +25,10 @@ public class ShoppingCartService  {
     @Inject
     PromoService ps;
 
-
     @Inject
     ShoppingCartOrderProcessor shoppingCartOrderProcessor;
 
     private ShoppingCart cart  = new ShoppingCart(); //Each user can have multiple shopping carts (tabbed browsing)
-
-   
 
     public ShoppingCartService() {
     }
