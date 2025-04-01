@@ -3,51 +3,43 @@ package com.redhat.coolstore.utils;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
-import javax.sql.DataSource;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import io.agroal.api.AgroalDataSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by tqvarnst on 2017-04-04.
+ * Database migration startup class using Flyway
  */
-@Singleton
-@Startup
-@TransactionManagement(TransactionManagementType.BEAN)
+@ApplicationScoped
 public class DataBaseMigrationStartup {
 
     @Inject
     Logger logger;
 
-    @Resource(mappedName = "java:jboss/datasources/CoolstoreDS")
-    DataSource dataSource;
+    @Inject
+    AgroalDataSource dataSource;
 
     @PostConstruct
     private void startup() {
-
+        if (dataSource == null) {
+            logger.severe("DataSource is not available");
+            return;
+        }
 
         try {
-            logger.info("Initializing/migrating the database using FlyWay");
+            logger.info("Initializing/migrating the database using Flyway");
             Flyway flyway = new Flyway();
             flyway.setDataSource(dataSource);
             flyway.baseline();
             // Start the db.migration
             flyway.migrate();
+            logger.info("Database migration completed successfully");
         } catch (FlywayException e) {
-            if(logger !=null)
-                logger.log(Level.SEVERE,"FAILED TO INITIALIZE THE DATABASE: " + e.getMessage(),e);
-            else
-                System.out.println("FAILED TO INITIALIZE THE DATABASE: " + e.getMessage() + " and injection of logger doesn't work");
-
+            logger.log(Level.SEVERE, "Failed to initialize the database: " + e.getMessage(), e);
+            throw new RuntimeException("Database migration failed", e);
         }
     }
-
-
-
 }

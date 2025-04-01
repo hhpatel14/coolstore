@@ -1,20 +1,23 @@
 package com.redhat.coolstore.service;
 
-import java.util.Hashtable;
+import java.io.Serializable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateful;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
+import com.redhat.coolstore.utils.Transformers;
 
-@Stateful
-public class ShoppingCartService  {
+@ApplicationScoped
+public class ShoppingCartService implements Serializable {
+
+    private static final long serialVersionUID = -8378172743965708556L;
+
+    private ConcurrentHashMap<String, ShoppingCart> carts = new ConcurrentHashMap<>();
 
     @Inject
     Logger log;
@@ -25,69 +28,68 @@ public class ShoppingCartService  {
     @Inject
     PromoService ps;
 
-
     @Inject
     ShoppingCartOrderProcessor shoppingCartOrderProcessor;
 
-    private ShoppingCart cart  = new ShoppingCart(); //Each user can have multiple shopping carts (tabbed browsing)
-
-   
+    @Inject
+    ShippingService shippingService;
 
     public ShoppingCartService() {
     }
 
     public ShoppingCart getShoppingCart(String cartId) {
-        return cart;
+        if (!carts.containsKey(cartId)) {
+            carts.put(cartId, new ShoppingCart());
+        }
+        return carts.get(cartId);
     }
 
     public ShoppingCart checkOutShoppingCart(String cartId) {
         ShoppingCart cart = this.getShoppingCart(cartId);
       
-        log.info("Sending  order: ");
+        log.info("Sending order: ");
         shoppingCartOrderProcessor.process(cart);
    
         cart.resetShoppingCartItemList();
         priceShoppingCart(cart);
+        carts.remove(cartId);
         return cart;
     }
 
+    public void deleteShoppingCart(String cartId) {
+        ShoppingCart cart = this.getShoppingCart(cartId);
+        cart.resetShoppingCartItemList();
+        priceShoppingCart(cart);
+        carts.remove(cartId);
+    }
+
     public void priceShoppingCart(ShoppingCart sc) {
-
         if (sc != null) {
-
             initShoppingCartForPricing(sc);
 
             if (sc.getShoppingCartItemList() != null && sc.getShoppingCartItemList().size() > 0) {
-
                 ps.applyCartItemPromotions(sc);
 
                 for (ShoppingCartItem sci : sc.getShoppingCartItemList()) {
-
                     sc.setCartItemPromoSavings(
                             sc.getCartItemPromoSavings() + sci.getPromoSavings() * sci.getQuantity());
                     sc.setCartItemTotal(sc.getCartItemTotal() + sci.getPrice() * sci.getQuantity());
-
                 }
 
-                sc.setShippingTotal(lookupShippingServiceRemote().calculateShipping(sc));
+                sc.setShippingTotal(shippingService.calculateShipping(sc));
 
                 if (sc.getCartItemTotal() >= 25) {
                     sc.setShippingTotal(sc.getShippingTotal()
-                            + lookupShippingServiceRemote().calculateShippingInsurance(sc));
+                            + shippingService.calculateShippingInsurance(sc));
                 }
-
             }
 
             ps.applyShippingPromotions(sc);
-
             sc.setCartTotal(sc.getCartItemTotal() + sc.getShippingTotal());
-
         }
-
     }
 
     private void initShoppingCartForPricing(ShoppingCart sc) {
-
         sc.setCartItemTotal(0);
         sc.setCartItemPromoSavings(0);
         sc.setShippingTotal(0);
@@ -101,26 +103,11 @@ public class ShoppingCartService  {
                 sci.setProduct(p);
                 sci.setPrice(p.getPrice());
             }
-
             sci.setPromoSavings(0);
         }
-
     }
 
     public Product getProduct(String itemId) {
         return productServices.getProductByItemId(itemId);
-    }
-
-	private static ShippingServiceRemote lookupShippingServiceRemote() {
-        try {
-            final Hashtable<String, String> jndiProperties = new Hashtable<>();
-            jndiProperties.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory");
-
-            final Context context = new InitialContext(jndiProperties);
-
-            return (ShippingServiceRemote) context.lookup("ejb:/ROOT/ShippingService!" + ShippingServiceRemote.class.getName());
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
