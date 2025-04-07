@@ -1,6 +1,6 @@
 package com.redhat.coolstore.utils;
 
-import jakarta.inject.Named;
+import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import java.util.logging.Logger;
 
@@ -8,7 +8,7 @@ public class Producers {
 
     Logger log = Logger.getLogger(Producers.class.getName());
 
-    @Named
+    @Produces
     public Logger produceLog(InjectionPoint injectionPoint) {
         return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
     }
