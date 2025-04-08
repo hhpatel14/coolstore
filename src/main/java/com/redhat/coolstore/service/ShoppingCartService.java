@@ -9,10 +9,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
-
+import com.redhat.coolstore.rest.client.ShippingServiceClient;
 @SessionScoped
 public class ShoppingCartService  {
 
@@ -24,6 +26,9 @@ public class ShoppingCartService  {
 
     @Inject
     PromoService ps;
+    
+    @RestClient
+    ShippingServiceClient ss;
 
     @Inject
     ShoppingCartOrderProcessor shoppingCartOrderProcessor;

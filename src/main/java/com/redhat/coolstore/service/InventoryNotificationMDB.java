@@ -5,6 +5,7 @@ import io.smallrye.reactive.messaging.annotations.Blocking;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class InventoryNotificationMDB {
     private static final int LOW_THRESHOLD = 50;
@@ -12,6 +13,7 @@ public class InventoryNotificationMDB {
     private CatalogService catalogService;
     @Incoming("orders")
     @Blocking
+    @Transactional
     public void processOrder(String orderStr) {
         try {
             System.out.println("received message inventory");
