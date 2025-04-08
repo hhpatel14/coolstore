@@ -8,12 +8,13 @@ import java.util.Map;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
@@ -31,21 +32,21 @@ public class CartEndpoint implements Serializable {
 
 	@GET
 	@Path("/{cartId}")
-	@Named
+	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart getCart(@PathParam("cartId") String cartId) {
 		return shoppingCartService.getShoppingCart(cartId);
 	}
 
 	@POST
 	@Path("/checkout/{cartId}")
-	@Named
+	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart checkout(@PathParam("cartId") String cartId) {
 		return shoppingCartService.checkOutShoppingCart(cartId);
 	}
 
 	@POST
 	@Path("/{cartId}/{itemId}/{quantity}")
-	@Named
+	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart add(@PathParam("cartId") String cartId,
 							@PathParam("itemId") String itemId,
 							@PathParam("quantity") int quantity) throws Exception {
@@ -72,7 +73,7 @@ public class CartEndpoint implements Serializable {
 
 	@POST
 	@Path("/{cartId}/{tmpId}")
-	@Named
+	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart set(@PathParam("cartId") String cartId,
 							@PathParam("tmpId") String tmpId) throws Exception {
 
@@ -96,7 +97,7 @@ public class CartEndpoint implements Serializable {
 
 	@DELETE
 	@Path("/{cartId}/{itemId}/{quantity}")
-	@Named
+	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart delete(@PathParam("cartId") String cartId,
 							   @PathParam("itemId") String itemId,
 							   @PathParam("quantity") int quantity) throws Exception {
@@ -120,6 +121,8 @@ public class CartEndpoint implements Serializable {
 		shoppingCartService.priceShoppingCart(cart);
 		return cart;
 	}
+
+
 
 	private List<ShoppingCartItem> dedupeCartItems(List<ShoppingCartItem> cartItems) {
 		List<ShoppingCartItem> result = new ArrayList<>();
