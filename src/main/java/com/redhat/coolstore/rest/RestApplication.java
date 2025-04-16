@@ -1,2 +1,10 @@
-// The RestApplication.java file is no longer necessary and should be removed.
-// Quarkus automatically configures JAX-RS endpoints, and the root path can be set in the application.properties file.
+package com.redhat.coolstore.rest;
+  
+  import jakarta.ws.rs.ApplicationPath;
+  import jakarta.ws.rs.core.Application;
+  
+  
+  @ApplicationPath("/services")
+  public class RestApplication extends Application {
+  
+  }

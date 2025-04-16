@@ -3,15 +3,14 @@ package com.redhat.coolstore.service;
 import com.redhat.coolstore.model.CatalogItemEntity;
 import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.utils.Transformers;
-
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.redhat.coolstore.utils.Transformers.toProduct;
 
-@ApplicationScoped
+@RequestScoped
 public class ProductService {
 
     @Inject
