@@ -4,6 +4,8 @@ import com.redhat.coolstore.model.Order;
 import com.redhat.coolstore.utils.Transformers;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import io.smallrye.common.annotation.Blocking;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 
 public class InventoryNotificationMDB {
@@ -14,6 +16,8 @@ public class InventoryNotificationMDB {
     private CatalogService catalogService;
 
     @Incoming("orders")
+    @Blocking
+    @Transactional
     public void processOrder(String orderStr) {
         try {
             System.out.println("Received message inventory");
