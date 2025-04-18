@@ -2,7 +2,9 @@ package com.redhat.coolstore.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
+import io.smallrye.common.annotation.Blocking;
 import com.redhat.coolstore.model.Order;
 import com.redhat.coolstore.utils.Transformers;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -18,6 +20,8 @@ public class OrderServiceMDB {
     CatalogService catalogService;
 
     @Incoming("order-queue")
+    @Blocking
+  	@Transactional
     public void onMessage(Message<String> message) {
         System.out.println("\nMessage received!");
         try {
