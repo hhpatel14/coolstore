@@ -23,6 +23,10 @@
       "status": "completed",
       "items_succeeded": 33,
       "items_skipped": 2
+    },
+    "verify": {
+      "status": "completed",
+      "build_ok": true
     }
   },
   "commits": [
