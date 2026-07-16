@@ -56,7 +56,7 @@
 - [x] 4. src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java
 - [x] 5. src/main/java/com/redhat/coolstore/model/InventoryEntity.java
 - [x] 6. src/main/java/com/redhat/coolstore/model/Order.java
-- [ ] 7. src/main/java/com/redhat/coolstore/model/OrderItem.java
+- [x] 7. src/main/java/com/redhat/coolstore/model/OrderItem.java
 - [ ] 8. src/main/java/com/redhat/coolstore/model/Product.java
 - [ ] 9. src/main/java/com/redhat/coolstore/model/Promotion.java
 - [ ] 10. src/main/java/com/redhat/coolstore/model/ShoppingCart.java
