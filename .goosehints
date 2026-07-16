@@ -69,7 +69,7 @@
 - [x] 17. src/main/java/com/redhat/coolstore/service/ProductService.java
 - [x] 18. src/main/java/com/redhat/coolstore/service/PromoService.java
 - [x] 19. src/main/java/com/redhat/coolstore/service/ShippingService.java
-- [ ] 20. src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java
+- [x] 20. src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java
 - [ ] 21. src/main/java/com/redhat/coolstore/service/OrderService.java
 - [ ] 22. src/main/java/com/redhat/coolstore/service/ShoppingCartService.java
 - [ ] 23. src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java
