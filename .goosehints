@@ -73,7 +73,7 @@
 - [x] 21. src/main/java/com/redhat/coolstore/service/OrderService.java
 - [x] 22. src/main/java/com/redhat/coolstore/service/ShoppingCartService.java
 - [x] 23. src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java
-- [ ] 24. src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java
+- [x] 24. src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java
 - [ ] 25. src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java
 - [ ] 26. src/main/java/com/redhat/coolstore/rest/RestApplication.java
 - [ ] 27. src/main/java/com/redhat/coolstore/rest/CartEndpoint.java
