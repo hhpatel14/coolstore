@@ -80,7 +80,7 @@
 - [x] 28. src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java
 - [x] 29. src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java
 - [x] 30. src/main/java/weblogic/application/ApplicationLifecycleEvent.java
-- [ ] 31. src/main/java/weblogic/application/ApplicationLifecycleListener.java
+- [x] 31. src/main/java/weblogic/application/ApplicationLifecycleListener.java
 - [ ] 32. src/main/java/weblogic/i18n/logging/NonCatalogLogger.java
 - [ ] 33. src/main/resources/META-INF/persistence.xml
 - [ ] 34. src/main/webapp/WEB-INF/beans.xml
