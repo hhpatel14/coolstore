@@ -67,7 +67,7 @@
 - [x] 15. src/main/java/com/redhat/coolstore/utils/StartupListener.java
 - [x] 16. src/main/java/com/redhat/coolstore/service/CatalogService.java
 - [x] 17. src/main/java/com/redhat/coolstore/service/ProductService.java
-- [ ] 18. src/main/java/com/redhat/coolstore/service/PromoService.java
+- [x] 18. src/main/java/com/redhat/coolstore/service/PromoService.java
 - [ ] 19. src/main/java/com/redhat/coolstore/service/ShippingService.java
 - [ ] 20. src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java
 - [ ] 21. src/main/java/com/redhat/coolstore/service/OrderService.java
