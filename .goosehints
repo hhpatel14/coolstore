@@ -82,6 +82,6 @@
 - [x] 30. src/main/java/weblogic/application/ApplicationLifecycleEvent.java
 - [x] 31. src/main/java/weblogic/application/ApplicationLifecycleListener.java
 - [x] 32. src/main/java/weblogic/i18n/logging/NonCatalogLogger.java
-- [ ] 33. src/main/resources/META-INF/persistence.xml
+- [x] 33. src/main/resources/META-INF/persistence.xml
 - [ ] 34. src/main/webapp/WEB-INF/beans.xml
 - [ ] 35. src/main/webapp/WEB-INF/web.xml
