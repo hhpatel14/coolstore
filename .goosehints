@@ -77,7 +77,7 @@
 - [x] 25. src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java
 - [x] 26. src/main/java/com/redhat/coolstore/rest/RestApplication.java
 - [x] 27. src/main/java/com/redhat/coolstore/rest/CartEndpoint.java
-- [ ] 28. src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java
+- [x] 28. src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java
 - [ ] 29. src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java
 - [ ] 30. src/main/java/weblogic/application/ApplicationLifecycleEvent.java
 - [ ] 31. src/main/java/weblogic/application/ApplicationLifecycleListener.java
