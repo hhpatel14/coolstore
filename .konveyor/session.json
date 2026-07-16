@@ -18,8 +18,179 @@
     "plan": {
       "status": "completed",
       "items_planned": 35
+    },
+    "execute": {
+      "status": "completed",
+      "items_succeeded": 33,
+      "items_skipped": 2
     }
   },
-  "commits": [],
+  "commits": [
+    {
+      "sha": "7501394a96806910d749d8d389b523c814145e83",
+      "message": "migrate: #1 pom.xml",
+      "step": 1
+    },
+    {
+      "sha": "533f03463144e249ea3f9b42e6aed72d48b8597b",
+      "message": "migrate: #2 src/main/resources/application.properties",
+      "step": 2
+    },
+    {
+      "sha": "9eba441bada614c64c4319a9a4bb52ecaff9ddc5",
+      "message": "migrate: #3 src/main/java/com/redhat/coolstore/persistence/Resources.java",
+      "step": 3
+    },
+    {
+      "sha": "09bff04a78f0d3edc9ad553f5f05fd9011e07ab7",
+      "message": "migrate: #4 src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java",
+      "step": 4
+    },
+    {
+      "sha": "bcffbb22b642d483d8c09cc59940c7e2a1839de3",
+      "message": "migrate: #5 src/main/java/com/redhat/coolstore/model/InventoryEntity.java",
+      "step": 5
+    },
+    {
+      "sha": "5de82251de14d0b2139f5d199499049600ae35c0",
+      "message": "migrate: #6 src/main/java/com/redhat/coolstore/model/Order.java",
+      "step": 6
+    },
+    {
+      "sha": "5f97b6764d6b7af2b7bcace2ff9d1dcacc7f1ba1",
+      "message": "migrate: #7 src/main/java/com/redhat/coolstore/model/OrderItem.java",
+      "step": 7
+    },
+    {
+      "sha": "a9241756995c414d57f1831db93c3381c51a6eb0",
+      "message": "migrate: #8 src/main/java/com/redhat/coolstore/model/Product.java",
+      "step": 8
+    },
+    {
+      "sha": "1ed7dcf870a992161dbc6dfa9e7e9095f38f9492",
+      "message": "migrate: #10 src/main/java/com/redhat/coolstore/model/ShoppingCart.java",
+      "step": 10
+    },
+    {
+      "sha": "5cbe0e95f662c6f792e0a1106e750069995c891e",
+      "message": "migrate: #12 src/main/java/com/redhat/coolstore/utils/Transformers.java",
+      "step": 12
+    },
+    {
+      "sha": "9d810015c5c56606d47255f6cf2eb03918e2bae9",
+      "message": "migrate: #13 src/main/java/com/redhat/coolstore/utils/Producers.java",
+      "step": 13
+    },
+    {
+      "sha": "876ea6d5293bd13ce6734d1f4167390488f449c6",
+      "message": "migrate: #14 src/main/java/com/redhat/coolstore/utils/DataBaseMigrationStartup.java",
+      "step": 14
+    },
+    {
+      "sha": "6ff0afc48bdf5c1ca691423083566709eb56f746",
+      "message": "migrate: #15 src/main/java/com/redhat/coolstore/utils/StartupListener.java",
+      "step": 15
+    },
+    {
+      "sha": "1e132e7fa03fdc7aad0e96efcbb6dada6bec2ea4",
+      "message": "migrate: #16 src/main/java/com/redhat/coolstore/service/CatalogService.java",
+      "step": 16
+    },
+    {
+      "sha": "c89181cf7ac11f4bae3ba05b5206c157b19bb54e",
+      "message": "migrate: #17 src/main/java/com/redhat/coolstore/service/ProductService.java",
+      "step": 17
+    },
+    {
+      "sha": "738db36123f3a9a6b0e84167d16003268270613e",
+      "message": "migrate: #18 src/main/java/com/redhat/coolstore/service/PromoService.java",
+      "step": 18
+    },
+    {
+      "sha": "0f48739262a5bfa409cbc6df9def2794e0faf227",
+      "message": "migrate: #19 src/main/java/com/redhat/coolstore/service/ShippingService.java",
+      "step": 19
+    },
+    {
+      "sha": "30b29f0ebecf8f2acc104102f1b2c01dca13e143",
+      "message": "migrate: #20 src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java",
+      "step": 20
+    },
+    {
+      "sha": "d8f8f0aa7ede5c614ce91171d8fd27778c1610d2",
+      "message": "migrate: #21 src/main/java/com/redhat/coolstore/service/OrderService.java",
+      "step": 21
+    },
+    {
+      "sha": "3de2b50ee533170a93de809ade7e1f4076ac804a",
+      "message": "migrate: #22 src/main/java/com/redhat/coolstore/service/ShoppingCartService.java",
+      "step": 22
+    },
+    {
+      "sha": "88048498fc7e1eb0cec4b05838c5880eef042f0d",
+      "message": "migrate: #23 src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java",
+      "step": 23
+    },
+    {
+      "sha": "d9d3ec3048f4a818f5398b3d34d47c6da9879920",
+      "message": "migrate: #24 src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java",
+      "step": 24
+    },
+    {
+      "sha": "d22b100620caecc9cad611b6ebcc85f9aef3da61",
+      "message": "migrate: #25 src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java",
+      "step": 25
+    },
+    {
+      "sha": "50086170ec1bbe02a5c9bff329c3824543a9427f",
+      "message": "migrate: #26 src/main/java/com/redhat/coolstore/rest/RestApplication.java",
+      "step": 26
+    },
+    {
+      "sha": "29715b987b8f35f7314f8082428cf22e2b6abf0e",
+      "message": "migrate: #27 src/main/java/com/redhat/coolstore/rest/CartEndpoint.java",
+      "step": 27
+    },
+    {
+      "sha": "11dd9e3890dd9cb04e32b91e892d8278fc791830",
+      "message": "migrate: #28 src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java",
+      "step": 28
+    },
+    {
+      "sha": "87cc25967107b77bf04d784ccd63510496035a62",
+      "message": "migrate: #29 src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java",
+      "step": 29
+    },
+    {
+      "sha": "05e76eeb2bcf18c4317c8612a1f37d564036bde2",
+      "message": "migrate: #30 src/main/java/weblogic/application/ApplicationLifecycleEvent.java",
+      "step": 30
+    },
+    {
+      "sha": "9e4b546c3a9c20d69622a833d8b93502abd5de6e",
+      "message": "migrate: #31 src/main/java/weblogic/application/ApplicationLifecycleListener.java",
+      "step": 31
+    },
+    {
+      "sha": "8096e491ad2f4077d911fc366caf41c8ef80f930",
+      "message": "migrate: #32 src/main/java/weblogic/i18n/logging/NonCatalogLogger.java",
+      "step": 32
+    },
+    {
+      "sha": "a90205fd5fd9607a56568e9a857f53d56c687fe1",
+      "message": "migrate: #33 src/main/resources/META-INF/persistence.xml",
+      "step": 33
+    },
+    {
+      "sha": "edfbdb1c48c1f6c223c230ffc1a0d1de3c49c06a",
+      "message": "migrate: #34 src/main/webapp/WEB-INF/beans.xml",
+      "step": 34
+    },
+    {
+      "sha": "22887bf3be5f38ef08ff0c8770eb2443666d40b0",
+      "message": "migrate: #35 src/main/webapp/WEB-INF/web.xml",
+      "step": 35
+    }
+  ],
   "errors": []
 }
