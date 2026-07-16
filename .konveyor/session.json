@@ -14,6 +14,10 @@
       "status": "completed",
       "nodes": 5390,
       "edges": 9436
+    },
+    "plan": {
+      "status": "completed",
+      "items_planned": 35
     }
   },
   "commits": [],
