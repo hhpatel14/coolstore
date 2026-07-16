@@ -84,4 +84,4 @@
 - [x] 32. src/main/java/weblogic/i18n/logging/NonCatalogLogger.java
 - [x] 33. src/main/resources/META-INF/persistence.xml
 - [x] 34. src/main/webapp/WEB-INF/beans.xml
-- [ ] 35. src/main/webapp/WEB-INF/web.xml
+- [x] 35. src/main/webapp/WEB-INF/web.xml
