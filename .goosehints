@@ -64,7 +64,7 @@
 - [x] 12. src/main/java/com/redhat/coolstore/utils/Transformers.java
 - [x] 13. src/main/java/com/redhat/coolstore/utils/Producers.java
 - [x] 14. src/main/java/com/redhat/coolstore/utils/DataBaseMigrationStartup.java
-- [ ] 15. src/main/java/com/redhat/coolstore/utils/StartupListener.java
+- [x] 15. src/main/java/com/redhat/coolstore/utils/StartupListener.java
 - [ ] 16. src/main/java/com/redhat/coolstore/service/CatalogService.java
 - [ ] 17. src/main/java/com/redhat/coolstore/service/ProductService.java
 - [ ] 18. src/main/java/com/redhat/coolstore/service/PromoService.java
