@@ -52,7 +52,7 @@
 ## Checklist
 - [x] 1. pom.xml
 - [x] 2. src/main/resources/application.properties
-- [ ] 3. src/main/java/com/redhat/coolstore/persistence/Resources.java
+- [x] 3. src/main/java/com/redhat/coolstore/persistence/Resources.java
 - [ ] 4. src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java
 - [ ] 5. src/main/java/com/redhat/coolstore/model/InventoryEntity.java
 - [ ] 6. src/main/java/com/redhat/coolstore/model/Order.java
