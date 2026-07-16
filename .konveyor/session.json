@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "session_id": "f8c23304-d239-19a0-719b-f1a62a9047e3",
+  "started_at": "2026-07-16T13:05:44.35357112Z",
+  "completed_at": "0001-01-01T00:00:00Z",
+  "status": "in_progress",
+  "migration_request": "Migrate this Java EE application to Quarkus",
+  "source_repo": "https://github.com/hhpatel14/coolstore.git",
+  "target_branch": "konveyor-migrate-20260716-130542",
+  "model": "claude-sonnet-4-5",
+  "provider": "gcp-vertex-ai",
+  "pipeline": {
+    "detect": {
+      "status": "completed",
+      "nodes": 5390,
+      "edges": 9436
+    }
+  },
+  "commits": [],
+  "errors": []
+}
