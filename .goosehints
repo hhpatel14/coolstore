@@ -54,7 +54,7 @@
 - [x] 2. src/main/resources/application.properties
 - [x] 3. src/main/java/com/redhat/coolstore/persistence/Resources.java
 - [x] 4. src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java
-- [ ] 5. src/main/java/com/redhat/coolstore/model/InventoryEntity.java
+- [x] 5. src/main/java/com/redhat/coolstore/model/InventoryEntity.java
 - [ ] 6. src/main/java/com/redhat/coolstore/model/Order.java
 - [ ] 7. src/main/java/com/redhat/coolstore/model/OrderItem.java
 - [ ] 8. src/main/java/com/redhat/coolstore/model/Product.java
