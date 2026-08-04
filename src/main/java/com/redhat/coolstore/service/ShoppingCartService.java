@@ -1,5 +1,6 @@
 package com.redhat.coolstore.service;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
@@ -14,7 +15,9 @@ import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
 
 @SessionScoped
-public class ShoppingCartService  {
+public class ShoppingCartService implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     @Inject
     Logger log;
