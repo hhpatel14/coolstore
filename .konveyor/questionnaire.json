@@ -1,0 +1,490 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "timestamp": "2026-08-04T10:22:00Z",
+    "applicationName": "coolstore-monolith",
+    "applicationVersion": "1.0.0-SNAPSHOT",
+    "migrationTarget": "Quarkus",
+    "sourceRuntime": "JBoss EAP 7.4",
+    "sourceFramework": "Java EE 7"
+  },
+  "detectionResults": {
+    "applicationArchitecture": {
+      "type": "Monolithic WAR",
+      "packaging": "war",
+      "buildTool": "Maven",
+      "javaVersion": "1.8"
+    },
+    "technologies": {
+      "frameworks": [
+        {
+          "name": "Java EE 7",
+          "components": [
+            "JAX-RS (REST endpoints)",
+            "JPA 2.1 (persistence)",
+            "CDI 1.1 (dependency injection)",
+            "EJB 3.2 (Message-Driven Beans)",
+            "JMS 2.0 (messaging)",
+            "Servlet 3.0"
+          ]
+        }
+      ],
+      "persistence": {
+        "provider": "Hibernate",
+        "jpaVersion": "2.1",
+        "database": "PostgreSQL",
+        "dataSource": "java:jboss/datasources/CoolstoreDS",
+        "transactionType": "JTA",
+        "migrationTool": "Flyway 4.1.2"
+      },
+      "messaging": {
+        "provider": "ActiveMQ (JBoss)",
+        "type": "JMS 2.0",
+        "destinations": [
+          {
+            "name": "topic/orders",
+            "type": "Topic",
+            "jndiName": "topic/orders"
+          }
+        ],
+        "messageDrivenBeans": [
+          {
+            "class": "com.redhat.coolstore.service.OrderServiceMDB",
+            "destination": "topic/orders",
+            "destinationType": "javax.jms.Topic"
+          },
+          {
+            "class": "com.redhat.coolstore.service.InventoryNotificationMDB",
+            "destination": "topic/orders",
+            "destinationType": "javax.jms.Topic",
+            "issues": ["Contains WebLogic-specific JNDI code"]
+          }
+        ]
+      },
+      "restServices": {
+        "framework": "JAX-RS",
+        "endpoints": [
+          {
+            "class": "com.redhat.coolstore.rest.CartEndpoint",
+            "path": "/cart",
+            "scope": "SessionScoped"
+          },
+          {
+            "class": "com.redhat.coolstore.rest.OrderEndpoint",
+            "path": "/orders"
+          },
+          {
+            "class": "com.redhat.coolstore.rest.ProductEndpoint",
+            "path": "/products"
+          }
+        ]
+      },
+      "security": {
+        "provider": "Keycloak",
+        "version": "20.0.5",
+        "realm": "eap",
+        "configFile": "webapp/keycloak.json"
+      },
+      "clustering": {
+        "enabled": true,
+        "features": [
+          "Distributable web sessions",
+          "High-availability messaging",
+          "Cluster password configured"
+        ]
+      }
+    },
+    "proprietary": {
+      "weblogicDependencies": [
+        {
+          "package": "weblogic.application",
+          "classes": [
+            "ApplicationLifecycleListener",
+            "ApplicationLifecycleEvent"
+          ],
+          "usage": [
+            "src/main/java/com/redhat/coolstore/utils/StartupListener.java"
+          ],
+          "severity": "high"
+        },
+        {
+          "package": "weblogic.jndi",
+          "classes": [
+            "WLInitialContextFactory"
+          ],
+          "usage": [
+            "src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java"
+          ],
+          "severity": "high"
+        },
+        {
+          "package": "weblogic.i18n.logging",
+          "classes": [
+            "NonCatalogLogger"
+          ],
+          "usage": [
+            "src/main/java/weblogic/i18n/logging/NonCatalogLogger.java"
+          ],
+          "severity": "medium"
+        }
+      ],
+      "jbossSpecific": [
+        {
+          "feature": "JBoss-specific JMS configuration",
+          "description": "Uses JBoss EAP specific messaging subsystem configuration",
+          "severity": "medium"
+        }
+      ]
+    },
+    "dependencies": {
+      "javaEE": [
+        {
+          "groupId": "javax",
+          "artifactId": "javaee-web-api",
+          "version": "7.0",
+          "scope": "provided"
+        },
+        {
+          "groupId": "javax",
+          "artifactId": "javaee-api",
+          "version": "7.0",
+          "scope": "provided"
+        }
+      ],
+      "jboss": [
+        {
+          "groupId": "org.jboss.spec.javax.jms",
+          "artifactId": "jboss-jms-api_2.0_spec",
+          "version": "2.0.0.Final"
+        },
+        {
+          "groupId": "org.jboss.spec.javax.rmi",
+          "artifactId": "jboss-rmi-api_1.0_spec",
+          "version": "1.0.2.Final"
+        }
+      ],
+      "other": [
+        {
+          "groupId": "org.flywaydb",
+          "artifactId": "flyway-core",
+          "version": "4.1.2",
+          "notes": "May need upgrade for Quarkus compatibility"
+        }
+      ]
+    },
+    "entityClasses": [
+      {
+        "name": "CatalogItemEntity",
+        "table": "PRODUCT_CATALOG",
+        "relationships": ["OneToOne with InventoryEntity"]
+      },
+      {
+        "name": "InventoryEntity",
+        "table": "PRODUCT_INVENTORY"
+      }
+    ],
+    "cdiComponents": {
+      "beans": [
+        "ShoppingCartService",
+        "ProductService",
+        "OrderService",
+        "CatalogService",
+        "PromoService",
+        "ShippingService"
+      ],
+      "producers": [
+        "EntityManager (in Resources.java)",
+        "Logger (in Producers.java)"
+      ],
+      "scopes": [
+        "SessionScoped (CartEndpoint)",
+        "ApplicationScoped (services)"
+      ]
+    }
+  },
+  "migrationDecisions": {
+    "targetPlatform": {
+      "framework": "Quarkus",
+      "recommendedVersion": "3.x",
+      "deploymentMode": "native-capable",
+      "buildTool": "Maven"
+    },
+    "conversionStrategy": {
+      "approach": "Incremental migration with refactoring",
+      "riskLevel": "medium-high",
+      "estimatedEffort": "medium",
+      "phases": [
+        "Remove WebLogic dependencies",
+        "Convert EJBs to CDI beans",
+        "Migrate JMS configuration to Quarkus",
+        "Update Flyway configuration",
+        "Migrate Keycloak integration",
+        "Configure Quarkus extensions",
+        "Testing and validation"
+      ]
+    },
+    "requiredChanges": {
+      "weblogicRemoval": {
+        "priority": "critical",
+        "impact": "high",
+        "tasks": [
+          {
+            "action": "Remove weblogic.application.ApplicationLifecycleListener",
+            "replacement": "Use Quarkus lifecycle events (@Observes StartupEvent, ShutdownEvent)",
+            "affectedFiles": [
+              "src/main/java/com/redhat/coolstore/utils/StartupListener.java"
+            ]
+          },
+          {
+            "action": "Remove WebLogic JNDI InitialContextFactory",
+            "replacement": "Use Quarkus JMS connector configuration",
+            "affectedFiles": [
+              "src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java"
+            ]
+          },
+          {
+            "action": "Delete weblogic package stubs",
+            "affectedFiles": [
+              "src/main/java/weblogic/application/*",
+              "src/main/java/weblogic/i18n/logging/*"
+            ]
+          }
+        ]
+      },
+      "messageDrivenBeans": {
+        "priority": "high",
+        "impact": "high",
+        "tasks": [
+          {
+            "action": "Convert @MessageDriven to @Incoming (Reactive Messaging)",
+            "rationale": "Quarkus uses SmallRye Reactive Messaging instead of JMS MDBs",
+            "affectedClasses": [
+              "OrderServiceMDB",
+              "InventoryNotificationMDB"
+            ],
+            "requiredExtensions": [
+              "quarkus-smallrye-reactive-messaging",
+              "quarkus-messaging-jms"
+            ]
+          },
+          {
+            "action": "Refactor JNDI-based JMS to Quarkus connector configuration",
+            "files": [
+              "InventoryNotificationMDB.java (init/close methods)"
+            ]
+          }
+        ]
+      },
+      "dependencyUpdates": {
+        "priority": "high",
+        "impact": "medium",
+        "tasks": [
+          {
+            "action": "Replace javaee-api with Quarkus extensions",
+            "removeDependencies": [
+              "javax:javaee-web-api:7.0",
+              "javax:javaee-api:7.0",
+              "org.jboss.spec.javax.jms:jboss-jms-api_2.0_spec"
+            ],
+            "addDependencies": [
+              "quarkus-resteasy-reactive-jackson (or quarkus-resteasy-jackson)",
+              "quarkus-hibernate-orm-panache",
+              "quarkus-jdbc-postgresql",
+              "quarkus-flyway",
+              "quarkus-oidc (for Keycloak)",
+              "quarkus-smallrye-reactive-messaging-jms",
+              "quarkus-artemis-jms (if using Artemis)"
+            ]
+          },
+          {
+            "action": "Update Flyway to compatible version",
+            "current": "4.1.2",
+            "target": "9.x+ (managed by quarkus-flyway extension)"
+          }
+        ]
+      },
+      "jpaConfiguration": {
+        "priority": "medium",
+        "impact": "low",
+        "tasks": [
+          {
+            "action": "Migrate persistence.xml to application.properties",
+            "oldFile": "src/main/resources/META-INF/persistence.xml",
+            "newConfig": "src/main/resources/application.properties",
+            "properties": [
+              "quarkus.datasource.db-kind=postgresql",
+              "quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgresDB",
+              "quarkus.datasource.username=postgresUser",
+              "quarkus.datasource.password=postgresPW",
+              "quarkus.hibernate-orm.database.generation=none",
+              "quarkus.flyway.migrate-at-start=true"
+            ]
+          },
+          {
+            "action": "Consider Panache pattern for simplified JPA",
+            "optional": true,
+            "benefit": "Reduced boilerplate code"
+          }
+        ]
+      },
+      "sessionManagement": {
+        "priority": "medium",
+        "impact": "medium",
+        "tasks": [
+          {
+            "action": "Review @SessionScoped usage in CartEndpoint",
+            "concern": "Quarkus has different session management",
+            "recommendation": "Consider stateless design or use quarkus-undertow for session support",
+            "affectedFiles": [
+              "src/main/java/com/redhat/coolstore/rest/CartEndpoint.java"
+            ]
+          }
+        ]
+      },
+      "keycloakIntegration": {
+        "priority": "medium",
+        "impact": "medium",
+        "tasks": [
+          {
+            "action": "Migrate to Quarkus OIDC extension",
+            "currentConfig": "webapp/keycloak.json",
+            "newConfig": "application.properties with quarkus.oidc.* properties",
+            "requiredExtension": "quarkus-oidc"
+          }
+        ]
+      },
+      "clusteringAndHA": {
+        "priority": "low",
+        "impact": "medium",
+        "tasks": [
+          {
+            "action": "Review clustering requirements for Quarkus deployment",
+            "concern": "Distributable sessions handled differently in Quarkus",
+            "recommendation": "Use Infinispan for distributed caching if needed"
+          }
+        ]
+      }
+    },
+    "quarkusExtensions": {
+      "required": [
+        "quarkus-resteasy-reactive-jackson",
+        "quarkus-hibernate-orm",
+        "quarkus-jdbc-postgresql",
+        "quarkus-flyway",
+        "quarkus-oidc",
+        "quarkus-smallrye-reactive-messaging-jms",
+        "quarkus-arc"
+      ],
+      "optional": [
+        "quarkus-hibernate-orm-panache",
+        "quarkus-undertow (for session support)",
+        "quarkus-infinispan-client (for clustering)",
+        "quarkus-smallrye-health",
+        "quarkus-micrometer",
+        "quarkus-openshift (for deployment)"
+      ]
+    },
+    "configurationFiles": {
+      "toCreate": [
+        "src/main/resources/application.properties (main config)",
+        "src/main/resources/application-dev.properties (dev profile)",
+        "src/main/resources/application-prod.properties (prod profile)"
+      ],
+      "toModify": [
+        "pom.xml (replace dependencies, add Quarkus BOM)"
+      ],
+      "toDelete": [
+        "src/main/resources/META-INF/persistence.xml (migrate to properties)",
+        "src/main/webapp/WEB-INF/beans.xml (CDI auto-discovered in Quarkus)",
+        "src/main/webapp/WEB-INF/web.xml (not needed in Quarkus)"
+      ]
+    },
+    "testingStrategy": {
+      "unitTests": {
+        "framework": "JUnit 5",
+        "extension": "quarkus-junit5",
+        "recommendation": "Add @QuarkusTest annotations"
+      },
+      "integrationTests": {
+        "approach": "Use Quarkus Dev Services for PostgreSQL and messaging",
+        "extensions": [
+          "quarkus-test-h2 or testcontainers"
+        ]
+      },
+      "validationAreas": [
+        "REST endpoint functionality",
+        "JMS message processing",
+        "Database persistence and migrations",
+        "Keycloak authentication",
+        "Session management behavior",
+        "Performance benchmarking"
+      ]
+    },
+    "deploymentStrategy": {
+      "containerization": {
+        "recommended": true,
+        "baseImage": "registry.access.redhat.com/ubi9/openjdk-17 or ubi9/ubi-minimal for native",
+        "buildMode": ["JVM mode", "Native mode (optional)"]
+      },
+      "targetPlatform": "OpenShift",
+      "cicd": {
+        "recommendation": "Integrate Quarkus build into existing pipeline",
+        "nativeBuild": "Consider separate native build pipeline for production"
+      }
+    },
+    "risks": [
+      {
+        "category": "WebLogic Compatibility",
+        "description": "Application contains WebLogic-specific code that must be completely removed",
+        "severity": "high",
+        "mitigation": "Refactor to use Quarkus equivalents for lifecycle and JNDI"
+      },
+      {
+        "category": "JMS Migration Complexity",
+        "description": "MDB to Reactive Messaging migration requires architectural changes",
+        "severity": "high",
+        "mitigation": "Thorough testing of message processing logic, consider keeping JMS API initially"
+      },
+      {
+        "category": "Session Management",
+        "description": "SessionScoped beans may behave differently in Quarkus",
+        "severity": "medium",
+        "mitigation": "Consider refactoring to stateless or use Quarkus session support"
+      },
+      {
+        "category": "Clustering Features",
+        "description": "HA and clustering configuration needs redesign for Quarkus",
+        "severity": "medium",
+        "mitigation": "Evaluate if clustering is required; use Infinispan if needed"
+      },
+      {
+        "category": "Flyway Version Gap",
+        "description": "Large version jump from Flyway 4.1.2 to current",
+        "severity": "low",
+        "mitigation": "Review migration scripts for compatibility"
+      }
+    ],
+    "benefits": [
+      "Faster startup time (especially in native mode)",
+      "Reduced memory footprint",
+      "Better cloud-native characteristics",
+      "Live reload during development",
+      "Unified configuration model",
+      "Built-in observability features",
+      "Simplified dependency management",
+      "Modern reactive programming model"
+    ]
+  },
+  "migrationReadiness": {
+    "overallScore": "70/100",
+    "breakdown": {
+      "codeQuality": "75/100 - Well-structured but has vendor lock-in",
+      "dependencies": "65/100 - Several migrations required",
+      "architecture": "70/100 - Standard Java EE patterns, good for migration",
+      "testing": "50/100 - Tests skipped in pom.xml, need to add",
+      "documentation": "80/100 - Good README with setup instructions"
+    },
+    "recommendation": "Proceed with migration - Medium complexity with clear path forward",
+    "estimatedTimeline": "4-6 weeks for full migration and testing"
+  }
+}
