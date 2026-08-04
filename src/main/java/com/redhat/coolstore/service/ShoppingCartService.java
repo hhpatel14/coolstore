@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -14,7 +14,7 @@ import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
 
-@SessionScoped
+@ApplicationScoped
 public class ShoppingCartService implements Serializable {
     
     private static final long serialVersionUID = 1L;
