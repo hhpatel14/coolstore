@@ -3,7 +3,7 @@ package com.redhat.coolstore.service;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import jakarta.ejb.Stateful;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,7 +13,7 @@ import com.redhat.coolstore.model.Product;
 import com.redhat.coolstore.model.ShoppingCart;
 import com.redhat.coolstore.model.ShoppingCartItem;
 
-@Stateful
+@SessionScoped
 public class ShoppingCartService  {
 
     @Inject
