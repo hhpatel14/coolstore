@@ -58,7 +58,6 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
