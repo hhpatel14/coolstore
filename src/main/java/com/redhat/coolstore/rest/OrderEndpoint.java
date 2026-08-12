@@ -3,7 +3,7 @@ package com.redhat.coolstore.rest;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
