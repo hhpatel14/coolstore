@@ -3,7 +3,7 @@ package com.redhat.coolstore.service;
 import com.redhat.coolstore.model.Order;
 import java.util.List;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

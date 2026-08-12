@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
