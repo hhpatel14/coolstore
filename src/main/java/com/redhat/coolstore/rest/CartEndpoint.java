@@ -30,18 +30,23 @@ public class CartEndpoint implements Serializable {
 	@Inject
 	private ShoppingCartService shoppingCartService;
 
+	// Cart storage per session
+	private Map<String, ShoppingCart> carts = new HashMap<>();
+
 	@GET
 	@Path("/{cartId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart getCart(@PathParam("cartId") String cartId) {
-		return shoppingCartService.getShoppingCart(cartId);
+		ShoppingCart cart = carts.computeIfAbsent(cartId, id -> new ShoppingCart());
+		return shoppingCartService.getShoppingCart(cart);
 	}
 
 	@POST
 	@Path("/checkout/{cartId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ShoppingCart checkout(@PathParam("cartId") String cartId) {
-		return shoppingCartService.checkOutShoppingCart(cartId);
+		ShoppingCart cart = carts.computeIfAbsent(cartId, id -> new ShoppingCart());
+		return shoppingCartService.checkOutShoppingCart(cart);
 	}
 
 	@POST
@@ -50,7 +55,7 @@ public class CartEndpoint implements Serializable {
 	public ShoppingCart add(@PathParam("cartId") String cartId,
 							@PathParam("itemId") String itemId,
 							@PathParam("quantity") int quantity) throws Exception {
-		ShoppingCart cart = shoppingCartService.getShoppingCart(cartId);
+		ShoppingCart cart = carts.computeIfAbsent(cartId, id -> new ShoppingCart());
 
 		Product product = shoppingCartService.getProduct(itemId);
 
@@ -77,8 +82,8 @@ public class CartEndpoint implements Serializable {
 	public ShoppingCart set(@PathParam("cartId") String cartId,
 							@PathParam("tmpId") String tmpId) throws Exception {
 
-		ShoppingCart cart = shoppingCartService.getShoppingCart(cartId);
-		ShoppingCart tmpCart = shoppingCartService.getShoppingCart(tmpId);
+		ShoppingCart cart = carts.computeIfAbsent(cartId, id -> new ShoppingCart());
+		ShoppingCart tmpCart = carts.computeIfAbsent(tmpId, id -> new ShoppingCart());
 
 		if (tmpCart != null) {
 			cart.resetShoppingCartItemList();
@@ -104,7 +109,7 @@ public class CartEndpoint implements Serializable {
 
 		List<ShoppingCartItem> toRemoveList = new ArrayList<>();
 
-		ShoppingCart cart = shoppingCartService.getShoppingCart(cartId);
+		ShoppingCart cart = carts.computeIfAbsent(cartId, id -> new ShoppingCart());
 
 		cart.getShoppingCartItemList().stream()
 				.filter(sci -> sci.getProduct().getItemId().equals(itemId))
