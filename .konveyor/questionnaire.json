@@ -1,0 +1,109 @@
+{
+  "_template_canary": "QNR-CANARY-7f3a9c21",
+  "detection": {
+    "language": "java",
+    "version": "1.8",
+    "frameworks": [
+      "javaee-web-api-7.0",
+      "javaee-api-7.0",
+      "jboss-jms-api_2.0_spec-2.0.0.Final",
+      "jboss-rmi-api_1.0_spec-1.0.2.Final",
+      "flyway-core-4.1.2",
+      "jpa-2.1",
+      "cdi-1.1",
+      "jax-rs-2.0",
+      "ejb-3.2",
+      "keycloak-client"
+    ],
+    "build_tool": "maven",
+    "app_server": "jboss-eap-7.4",
+    "source_file_count": 23
+  },
+  "decisions": [
+    {
+      "id": 1,
+      "question": "The prompt specifies 'Quarkus 3' as the target. Which specific Quarkus version should be the migration target?",
+      "options": [
+        "A) Quarkus 3.2 LTS - Long-term support release with stability guarantees",
+        "B) Quarkus 3.15+ - Latest stable release with newest features and performance improvements",
+        "C) Quarkus 3.8 - Balance between stability and modern features"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "Quarkus 3.2 LTS is recommended for enterprise migrations from Java EE/JBoss EAP. It provides long-term support with backported security fixes, making it the safest choice for production workloads. The application shows production characteristics (clustering, JMS, Keycloak integration) that benefit from LTS stability."
+    },
+    {
+      "id": 2,
+      "question": "Three vendored WebLogic stub classes were detected in src/main/java/weblogic/* (ApplicationLifecycleListener, ApplicationLifecycleEvent, NonCatalogLogger). These appear to be empty stub implementations. How should these be handled?",
+      "options": [
+        "A) Remove entirely - grep the codebase to confirm nothing references them, then delete the weblogic package",
+        "B) Replace with standard Java EE equivalents - map ApplicationLifecycleListener to @Startup/@Observes and NonCatalogLogger to standard java.util.logging",
+        "C) Investigate first - search for any references in the codebase before deciding on removal or replacement"
+      ],
+      "recommendation": "C",
+      "chosen": "C",
+      "reasoning": "The weblogic.* classes are stub implementations (empty methods, Apache license headers), suggesting they were created to satisfy compilation dependencies. InventoryNotificationMDB references weblogic.jndi.WLInitialContextFactory and uses PortableRemoteObject, indicating WebLogic-specific JMS initialization code exists. Must search for all references before deciding whether to remove or replace these stubs and the code that depends on them."
+    },
+    {
+      "id": 3,
+      "question": "The application serves UI via JSP files (index.jsp with AngularJS frontend, health.jsp). What should be the view layer strategy for the Quarkus migration?",
+      "options": [
+        "A) Keep JSP - Use quarkus-undertow and maintain existing JSP files",
+        "B) Convert to API-only - Remove JSP files, serve static AngularJS files directly, app becomes pure REST backend",
+        "C) Modernize frontend separately - Extract AngularJS to standalone frontend, migrate backend to API-only Quarkus"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "The JSP files are minimal wrappers around an AngularJS SPA (index.jsp loads bower components and Angular app files, then renders <div ng-view></div>). The only server-side logic is request.getSession(true). The frontend is already a client-side SPA that communicates with REST endpoints (/services/products, /services/cart). Converting to API-only means serving the Angular app as static files and removing JSP, which aligns with Quarkus best practices and cloud-native architecture."
+    },
+    {
+      "id": 4,
+      "question": "The application uses Keycloak for authentication (keycloak.json config found, realm 'eap', resource 'eap-app'). How should authentication be migrated to Quarkus?",
+      "options": [
+        "A) Quarkus OIDC - Use quarkus-oidc extension with the existing Keycloak server configuration",
+        "B) Quarkus Keycloak Authorization - Use quarkus-keycloak-authorization for policy enforcement",
+        "C) Custom security - Implement custom authentication without Keycloak integration"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "The application already uses Keycloak with OIDC flow (keycloak.json shows public-client: true, typical for SPAs). Quarkus OIDC (quarkus-oidc) is the direct replacement for Keycloak adapter, supporting the same realm/client configuration. The existing keycloak.json can be translated to application.properties with minimal changes. This maintains the existing security architecture while using Quarkus-native extensions."
+    },
+    {
+      "id": 5,
+      "question": "The persistence.xml references java:jboss/datasources/CoolstoreDS and uses Hibernate with JPA 2.1. The README shows PostgreSQL setup. What database configuration should be used in Quarkus?",
+      "options": [
+        "A) PostgreSQL with Hibernate ORM - Use quarkus-hibernate-orm and quarkus-jdbc-postgresql, configure PostgreSQL datasource",
+        "B) PostgreSQL with Hibernate Reactive - Use quarkus-hibernate-reactive-panache for reactive/async database access",
+        "C) H2 in-memory for dev, PostgreSQL for prod - Use Quarkus dev services for local development, PostgreSQL for production"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "The application uses standard JPA/Hibernate (CriteriaBuilder queries, EntityManager, @Entity/@OneToOne mappings) without reactive patterns. The README documents explicit PostgreSQL setup instructions with JDBC driver configuration. Migration should use quarkus-hibernate-orm with quarkus-jdbc-postgresql to maintain compatibility. The Flyway migrations (V1_1__CreateSchema.sql, V1_2__AddInitialData.sql) indicate schema management is already in place and should continue with quarkus-flyway."
+    },
+    {
+      "id": 6,
+      "question": "Two Message-Driven Beans (OrderServiceMDB, InventoryNotificationMDB) consume from 'topic/orders' using JMS 2.0. How should messaging be migrated to Quarkus?",
+      "options": [
+        "A) SmallRye Reactive Messaging with in-memory connector - Use @Incoming/@Outgoing with memory channel for simple pub/sub",
+        "B) SmallRye Reactive Messaging with Apache Kafka - Migrate from JMS topics to Kafka topics for cloud-native messaging",
+        "C) Quarkus Artemis JMS - Use quarkus-artemis-jms to maintain JMS API compatibility with ActiveMQ Artemis (JBoss successor)"
+      ],
+      "recommendation": "C",
+      "chosen": "C",
+      "reasoning": "The application uses JMS Topics with MDB pattern (OrderServiceMDB, InventoryNotificationMDB both consume topic/orders). The README shows ActiveMQ configuration (messaging-activemq subsystem, cluster-password) and demonstrates clustering with two JBoss instances processing messages. InventoryNotificationMDB contains WebLogic-specific JMS code that needs replacement. Quarkus Artemis JMS (quarkus-artemis-jms) provides JMS API compatibility while enabling migration of MDB to @Incoming annotations incrementally, and Artemis is the natural successor to ActiveMQ in the Red Hat ecosystem."
+    },
+    {
+      "id": 7,
+      "question": "The application is a single-module Maven project (monolith) with 23 source files across model, service, rest, and persistence packages. What should be the migration scope?",
+      "options": [
+        "A) Migrate entire monolith to Quarkus - Keep single-module structure, convert all Java EE APIs to Quarkus extensions",
+        "B) Split into microservices first - Separate catalog, order, and inventory into independent Quarkus services",
+        "C) Strangler pattern - Deploy Quarkus alongside JBoss, gradually migrate endpoints one REST resource at a time"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "The application is already a cohesive monolith with clear layering (model, service, rest) and only 23 source files. The services are tightly coupled (OrderServiceMDB updates inventory via CatalogService, components share EntityManager). The migration prompt is 'migrate Java EE application to Quarkus 3' not 'decompose to microservices'. Migrate the entire application to Quarkus as a single module first, maintaining the monolith architecture. This reduces migration risk, preserves transactions/consistency, and allows later decomposition if needed based on operational experience with the Quarkus version."
+    }
+  ],
+  "mode": "non-interactive"
+}
