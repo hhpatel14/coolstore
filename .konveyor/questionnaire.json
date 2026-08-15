@@ -1,0 +1,549 @@
+{
+  "questionnaire_version": "1.0",
+  "generated_at": "2026-08-15T20:14:00Z",
+  "migration_prompt": "Migrate a Java EE application to Quarkus 3",
+  
+  "detection": {
+    "summary": "Java EE 7 monolith WAR application with mixed WebLogic/WildFly code, indicating partial prior migration from WebLogic to JBoss/WildFly",
+    
+    "source_technology": {
+      "platform": "javaee-7",
+      "language": "java-8",
+      "build_tool": "maven",
+      "packaging": "war",
+      "framework_details": {
+        "ejb": "3.2",
+        "cdi": "1.1",
+        "jpa": "2.1",
+        "jax_rs": "2.0",
+        "jms": "2.0",
+        "servlet": "3.0"
+      }
+    },
+    
+    "current_runtime": {
+      "primary": "jboss-eap-7.4-or-wildfly",
+      "evidence": [
+        "README.md references 'JBoss 7.4'",
+        "persistence.xml datasource: java:jboss/datasources/CoolstoreDS",
+        "WildFly JNDI in ShoppingCartService.java: org.wildfly.naming.client.WildFlyInitialContextFactory"
+      ],
+      "anomalies": [
+        {
+          "type": "legacy_code",
+          "description": "WebLogic-specific classes and JNDI code present in source tree",
+          "locations": [
+            "src/main/java/weblogic/application/ApplicationLifecycleListener.java",
+            "src/main/java/weblogic/application/ApplicationLifecycleEvent.java",
+            "src/main/java/weblogic/i18n/logging/NonCatalogLogger.java",
+            "com.redhat.coolstore.service.InventoryNotificationMDB (WebLogic JNDI: weblogic.jndi.WLInitialContextFactory, t3://localhost:7001)",
+            "com.redhat.coolstore.utils.StartupListener extends ApplicationLifecycleListener"
+          ],
+          "interpretation": "Application appears to have been migrated from WebLogic to JBoss/WildFly previously. WebLogic classes are stub implementations to allow compilation without WebLogic libraries. Some WebLogic JNDI code remains in InventoryNotificationMDB."
+        }
+      ]
+    },
+    
+    "dependencies": {
+      "standard": [
+        "javax:javaee-web-api:7.0 (provided)",
+        "javax:javaee-api:7.0 (provided)",
+        "org.jboss.spec.javax.jms:jboss-jms-api_2.0_spec:2.0.0.Final",
+        "org.jboss.spec.javax.rmi:jboss-rmi-api_1.0_spec:1.0.2.Final",
+        "org.flywaydb:flyway-core:4.1.2"
+      ],
+      "proprietary": [],
+      "vendored": [],
+      "unrecognized": []
+    },
+    
+    "architecture": {
+      "layers": [
+        {
+          "name": "REST Layer",
+          "package": "com.redhat.coolstore.rest",
+          "technologies": ["JAX-RS 2.0", "CDI"],
+          "components": ["RestApplication", "ProductEndpoint", "CartEndpoint", "OrderEndpoint"],
+          "patterns": ["@ApplicationPath(\"/services\")", "@RequestScoped", "@SessionScoped"]
+        },
+        {
+          "name": "Service Layer",
+          "package": "com.redhat.coolstore.service",
+          "technologies": ["EJB 3.2", "CDI", "JMS"],
+          "components": [
+            "ProductService (@Stateless)",
+            "CatalogService (@Stateless)",
+            "OrderService (@Stateless)",
+            "ShoppingCartService (@Stateful)",
+            "PromoService",
+            "ShippingService (@Stateless, @Remote)",
+            "OrderServiceMDB (@MessageDriven)",
+            "InventoryNotificationMDB (MessageListener, no annotation)",
+            "ShoppingCartOrderProcessor (@Stateless, JMS producer)"
+          ],
+          "patterns": ["@Inject", "EJB Remote", "Message-Driven Beans"]
+        },
+        {
+          "name": "Model/Entity Layer",
+          "package": "com.redhat.coolstore.model",
+          "technologies": ["JPA 2.1"],
+          "components": [
+            "CatalogItemEntity",
+            "InventoryEntity",
+            "Order",
+            "OrderItem",
+            "Product",
+            "ShoppingCart",
+            "ShoppingCartItem",
+            "Promotion"
+          ],
+          "patterns": ["@Entity", "@OneToOne cascade", "Hibernate"]
+        },
+        {
+          "name": "Data Access Layer",
+          "package": "com.redhat.coolstore.persistence",
+          "technologies": ["JPA", "CDI"],
+          "components": ["Resources (EntityManager producer)"],
+          "patterns": ["@PersistenceContext", "@Produces"]
+        },
+        {
+          "name": "Utilities",
+          "package": "com.redhat.coolstore.utils",
+          "technologies": ["Flyway", "WebLogic (legacy)"],
+          "components": [
+            "DataBaseMigrationStartup (@Startup, @Singleton)",
+            "StartupListener (extends WebLogic ApplicationLifecycleListener)",
+            "Producers",
+            "Transformers"
+          ],
+          "patterns": ["@PostConstruct", "Database migrations"]
+        }
+      ],
+      
+      "view_layer": {
+        "present": true,
+        "technology": "JSP + AngularJS SPA",
+        "files": ["index.jsp", "health.jsp"],
+        "frontend_framework": "AngularJS 1.x",
+        "ui_framework": "PatternFly",
+        "session_management": "JSP session (request.getSession(true))",
+        "static_resources": "bower_components"
+      },
+      
+      "messaging": {
+        "technology": "JMS 2.0",
+        "broker": "embedded (topic/orders)",
+        "patterns": [
+          {
+            "type": "Message-Driven Bean",
+            "class": "OrderServiceMDB",
+            "destination": "topic/orders",
+            "destination_type": "javax.jms.Topic",
+            "purpose": "Process orders and update inventory"
+          },
+          {
+            "type": "MessageListener (no MDB annotation)",
+            "class": "InventoryNotificationMDB",
+            "destination": "topic/orders (WebLogic JNDI)",
+            "destination_type": "javax.jms.Topic",
+            "purpose": "Check low inventory threshold",
+            "note": "Contains WebLogic-specific JNDI code, may not be functional on current runtime"
+          },
+          {
+            "type": "JMS Producer",
+            "class": "ShoppingCartOrderProcessor",
+            "destination": "java:/topic/orders",
+            "purpose": "Publish order messages"
+          }
+        ]
+      },
+      
+      "persistence": {
+        "orm": "JPA 2.1 / Hibernate",
+        "database": "PostgreSQL (per README.md)",
+        "datasource_jndi": "java:jboss/datasources/CoolstoreDS",
+        "persistence_unit": "primary",
+        "migration_tool": "Flyway 4.1.2",
+        "migration_scripts": [
+          "src/main/resources/db/migration/V1_1__CreateSchema.sql",
+          "src/main/resources/db/migration/V1_2__AddInitialData.sql"
+        ],
+        "patterns": ["JPA Criteria API", "@PersistenceContext", "JTA transactions"]
+      },
+      
+      "authentication": {
+        "technology": "Keycloak",
+        "config_file": "src/main/webapp/keycloak.json",
+        "realm": "eap",
+        "auth_server": "http://localhost:8081/",
+        "client_id": "eap-app",
+        "client_type": "public-client",
+        "realm_export": "realm-export.json (1019 lines)"
+      },
+      
+      "remote_calls": {
+        "present": true,
+        "type": "EJB Remote",
+        "interface": "ShippingServiceRemote",
+        "implementation": "ShippingService (@Stateless, @Remote)",
+        "lookup": "JNDI lookup in ShoppingCartService.lookupShippingServiceRemote()",
+        "jndi_name": "ejb:/ROOT/ShippingService!com.redhat.coolstore.service.ShippingServiceRemote",
+        "note": "Remote lookup within same application - unclear if used by external apps"
+      },
+      
+      "lifecycle_hooks": [
+        {
+          "type": "@Startup @Singleton",
+          "class": "DataBaseMigrationStartup",
+          "method": "@PostConstruct startup()",
+          "purpose": "Run Flyway database migrations"
+        },
+        {
+          "type": "WebLogic ApplicationLifecycleListener",
+          "class": "StartupListener",
+          "methods": ["postStart()", "preStop()"],
+          "purpose": "Application lifecycle logging",
+          "note": "WebLogic-specific, likely non-functional on JBoss/WildFly"
+        }
+      ]
+    },
+    
+    "file_counts": {
+      "java_files": 26,
+      "model_entities": 8,
+      "service_classes": 11,
+      "rest_endpoints": 4,
+      "message_driven_beans": 2,
+      "jsp_files": 2,
+      "sql_migrations": 2
+    }
+  },
+  
+  "validation": {
+    "prompt_matches_code": true,
+    "reasoning": "The source code is definitively a Java EE 7 application using javaee-api:7.0 with EJB 3.2, CDI 1.1, JPA 2.1, JAX-RS 2.0, and JMS 2.0. The migration prompt 'Migrate a Java EE application to Quarkus 3' accurately describes the required migration. The target 'Quarkus 3' is specific and appropriate.",
+    "mismatches": [],
+    "complexity_notes": [
+      "Mixed WebLogic/WildFly code indicates partial prior migration from WebLogic to JBoss/WildFly",
+      "WebLogic stub classes and JNDI code need to be cleaned up as part of Quarkus migration",
+      "InventoryNotificationMDB contains WebLogic JNDI code that appears non-functional"
+    ]
+  },
+  
+  "decisions": [
+    {
+      "category": "2_proprietary_dependencies",
+      "applies": true,
+      "question": "WebLogic stub classes are present in the source tree. How should these be handled?",
+      "context": {
+        "finding": "Custom WebLogic stub classes exist in src/main/java/weblogic/ to allow compilation without WebLogic libraries",
+        "classes": [
+          "weblogic.application.ApplicationLifecycleListener",
+          "weblogic.application.ApplicationLifecycleEvent",
+          "weblogic.i18n.logging.NonCatalogLogger"
+        ],
+        "usage": [
+          "StartupListener.java extends ApplicationLifecycleListener",
+          "InventoryNotificationMDB contains WebLogic JNDI initialization code"
+        ],
+        "evidence": "These appear to be stub implementations from a previous WebLogic-to-JBoss migration. The actual WebLogic libraries are not in pom.xml dependencies."
+      },
+      "options": [
+        {
+          "id": "remove-stubs",
+          "label": "Remove WebLogic stub classes and migrate to Quarkus lifecycle events",
+          "description": "Delete weblogic package and StartupListener. Use Quarkus @Observes StartupEvent for lifecycle hooks. Clean up InventoryNotificationMDB WebLogic JNDI code.",
+          "recommended": true,
+          "rationale": "Quarkus has its own lifecycle event model. WebLogic stubs are technical debt from prior migration and serve no purpose in Quarkus."
+        },
+        {
+          "id": "keep-stubs-temporarily",
+          "label": "Keep stub classes temporarily for reference during migration",
+          "description": "Retain stubs during migration phase, remove after verification",
+          "recommended": false,
+          "rationale": "May help understand original WebLogic behavior, but adds unnecessary complexity"
+        }
+      ],
+      "decision": "remove-stubs",
+      "confidence": "confirmed",
+      "reasoning": "WebLogic stubs are legacy code from prior migration. Quarkus has superior lifecycle event mechanisms (@Observes StartupEvent, @Observes ShutdownEvent). StartupListener's logging can be replaced with standard logging in Quarkus startup observers. InventoryNotificationMDB's WebLogic JNDI code is non-functional and should be removed or converted to standard JMS/Reactive Messaging."
+    },
+    
+    {
+      "category": "3_view_layer",
+      "applies": true,
+      "question": "The application has JSP views serving an AngularJS single-page application. How should the view layer be handled in Quarkus?",
+      "context": {
+        "finding": "Two JSP files (index.jsp, health.jsp) serve AngularJS 1.x SPA with PatternFly UI",
+        "jsp_usage": [
+          "index.jsp: Initializes HTTP session (request.getSession(true)), loads AngularJS app",
+          "health.jsp: Health check page"
+        ],
+        "frontend": {
+          "framework": "AngularJS 1.x",
+          "ui_library": "PatternFly",
+          "package_manager": "Bower",
+          "location": "src/main/webapp/"
+        },
+        "session_management": "JSP creates HTTP session for AngularJS app"
+      },
+      "options": [
+        {
+          "id": "static-files-api-only",
+          "label": "Convert to API-only backend, serve AngularJS as static files",
+          "description": "Remove JSP files. Move frontend resources to src/main/resources/META-INF/resources/. Serve as static files. Replace JSP session with JWT or session cookies for authentication.",
+          "recommended": true,
+          "rationale": "Quarkus excels at serving static files and APIs. JSP support in Quarkus is minimal and not recommended. This is the cloud-native pattern. Session can be managed via Keycloak tokens."
+        },
+        {
+          "id": "keep-jsp-undertow",
+          "label": "Keep JSP using Quarkus Undertow JSP extension",
+          "description": "Use quarkus-undertow with JSP support to maintain current structure",
+          "recommended": false,
+          "rationale": "JSP in Quarkus is not well-supported and adds unnecessary dependencies. Not cloud-native."
+        },
+        {
+          "id": "separate-frontend",
+          "label": "Deploy frontend separately from backend",
+          "description": "Serve AngularJS from separate web server (nginx, CDN), Quarkus as pure API backend",
+          "recommended": false,
+          "rationale": "Increases deployment complexity for a simple SPA. Overkill for this application size."
+        }
+      ],
+      "decision": "static-files-api-only",
+      "confidence": "needs-confirmation",
+      "reasoning": "Quarkus can serve static files from META-INF/resources/ directory out-of-the-box. The AngularJS app can be served as static HTML/CSS/JS without JSP. Session management can be handled via Keycloak OIDC tokens instead of HTTP sessions created in JSP. However, need to confirm if there are other session dependencies in the AngularJS code that might require HTTP session state. The health.jsp can be replaced with Quarkus SmallRye Health extension."
+    },
+    
+    {
+      "category": "4_authentication",
+      "applies": true,
+      "question": "The application uses Keycloak for authentication. How should Keycloak integration be migrated to Quarkus?",
+      "context": {
+        "finding": "Keycloak configuration in keycloak.json, realm export available",
+        "current_config": {
+          "file": "src/main/webapp/keycloak.json",
+          "realm": "eap",
+          "auth_server": "http://localhost:8081/",
+          "client_id": "eap-app",
+          "client_type": "public-client"
+        },
+        "adapter": "Likely using Java EE Keycloak adapter (implicit from config file location)"
+      },
+      "options": [
+        {
+          "id": "quarkus-oidc",
+          "label": "Migrate to Quarkus OIDC extension with Keycloak",
+          "description": "Use quarkus-oidc extension. Move config from keycloak.json to application.properties. Use Quarkus OIDC annotations for security.",
+          "recommended": true,
+          "rationale": "Quarkus has first-class OIDC/Keycloak support via quarkus-oidc. More efficient, cloud-native, and well-integrated than Java EE adapters."
+        },
+        {
+          "id": "quarkus-keycloak-authorization",
+          "label": "Use Quarkus Keycloak Authorization extension",
+          "description": "Use quarkus-keycloak-authorization for policy enforcement",
+          "recommended": false,
+          "rationale": "Only needed if using Keycloak Authorization Services. Standard OIDC is sufficient for most cases."
+        }
+      ],
+      "decision": "quarkus-oidc",
+      "confidence": "confirmed",
+      "reasoning": "Quarkus OIDC extension is the standard way to integrate with Keycloak in Quarkus applications. Configuration moves from keycloak.json to application.properties (quarkus.oidc.*). The extension supports public clients, tokens, role-based access control, and integrates seamlessly with Quarkus security. The existing Keycloak realm can be used without changes. Need to: 1) Add quarkus-oidc dependency, 2) Migrate config to application.properties, 3) Add @RolesAllowed or other security annotations to JAX-RS endpoints if needed."
+    },
+    
+    {
+      "category": "5_database_persistence",
+      "applies": true,
+      "question": "The application uses PostgreSQL with JPA/Hibernate and Flyway migrations. What should the database and persistence configuration be in Quarkus?",
+      "context": {
+        "finding": "PostgreSQL database with JPA 2.1, Hibernate, Flyway 4.1.2 migrations",
+        "current_config": {
+          "database": "PostgreSQL (per README.md)",
+          "orm": "JPA 2.1 / Hibernate",
+          "datasource_jndi": "java:jboss/datasources/CoolstoreDS",
+          "persistence_unit": "primary",
+          "migration_tool": "Flyway 4.1.2",
+          "migrations": [
+            "V1_1__CreateSchema.sql",
+            "V1_2__AddInitialData.sql"
+          ]
+        },
+        "patterns": ["JPA Criteria API", "@PersistenceContext", "JTA transactions"]
+      },
+      "options": [
+        {
+          "id": "quarkus-hibernate-orm-flyway",
+          "label": "Use Quarkus Hibernate ORM with Flyway extension",
+          "description": "Keep PostgreSQL, Hibernate, and Flyway. Use quarkus-hibernate-orm, quarkus-jdbc-postgresql, and quarkus-flyway extensions. Configure datasource in application.properties. Keep existing entities and Flyway migrations.",
+          "recommended": true,
+          "rationale": "Straightforward migration path. Quarkus has excellent Hibernate ORM support with optimizations. Flyway extension works identically. JTA handled by Quarkus/Narayana automatically."
+        },
+        {
+          "id": "quarkus-hibernate-reactive",
+          "label": "Migrate to Quarkus Hibernate Reactive",
+          "description": "Use reactive PostgreSQL driver and Hibernate Reactive for non-blocking database access",
+          "recommended": false,
+          "rationale": "Requires rewriting all database access code to use reactive patterns (Uni/Multi). Significant effort for unclear benefit in this application."
+        },
+        {
+          "id": "switch-to-liquibase",
+          "label": "Switch from Flyway to Liquibase for migrations",
+          "description": "Use quarkus-liquibase instead of Flyway",
+          "recommended": false,
+          "rationale": "Unnecessary change. Flyway migrations already exist and work well."
+        }
+      ],
+      "decision": "quarkus-hibernate-orm-flyway",
+      "confidence": "confirmed",
+      "reasoning": "This is the most straightforward migration path. Quarkus Hibernate ORM is mature, optimized (compile-time bytecode enhancement), and compatible with JPA 2.1+ code. Existing JPA entities, JPQL queries, and Criteria API usage will work with minimal changes. Flyway extension will run existing migrations. Configuration changes needed: 1) Add quarkus-hibernate-orm, quarkus-jdbc-postgresql, quarkus-flyway dependencies, 2) Configure datasource in application.properties (quarkus.datasource.*, quarkus.hibernate-orm.*, quarkus.flyway.*), 3) Remove persistence.xml (Quarkus uses application.properties), 4) Remove @PersistenceContext producer (EntityManager auto-injected in Quarkus). JTA transactions work via Quarkus transaction management."
+    },
+    
+    {
+      "category": "6_messaging",
+      "applies": true,
+      "question": "The application uses JMS 2.0 with Message-Driven Beans and a topic. How should messaging be handled in Quarkus?",
+      "context": {
+        "finding": "JMS 2.0 with topic/orders, 2 MDBs (OrderServiceMDB, InventoryNotificationMDB), 1 producer (ShoppingCartOrderProcessor)",
+        "current_config": {
+          "technology": "JMS 2.0",
+          "destination": "topic/orders",
+          "destination_type": "javax.jms.Topic",
+          "jndi": "java:/topic/orders"
+        },
+        "consumers": [
+          {
+            "class": "OrderServiceMDB",
+            "annotation": "@MessageDriven",
+            "purpose": "Process orders and update inventory",
+            "functional": true
+          },
+          {
+            "class": "InventoryNotificationMDB",
+            "annotation": "None (implements MessageListener)",
+            "purpose": "Check low inventory threshold",
+            "functional": false,
+            "note": "Contains WebLogic JNDI code, likely non-functional on current runtime"
+          }
+        ],
+        "producer": {
+          "class": "ShoppingCartOrderProcessor",
+          "pattern": "@Inject JMSContext, @Resource Topic"
+        }
+      },
+      "options": [
+        {
+          "id": "quarkus-artemis-jms",
+          "label": "Use Quarkus Artemis JMS extension",
+          "description": "Keep JMS API. Use quarkus-artemis-jms with embedded or external Artemis broker. Convert MDBs to @JMSListener or keep as MessageListener with Artemis.",
+          "recommended": false,
+          "rationale": "Maintains JMS API but MDB pattern is less cloud-native. Artemis adds deployment complexity."
+        },
+        {
+          "id": "quarkus-reactive-messaging-memory",
+          "label": "Migrate to Quarkus Reactive Messaging with in-memory channel",
+          "description": "Use SmallRye Reactive Messaging with in-memory connector. Convert MDBs to @Incoming methods, producer to @Outgoing or Emitter. Topic becomes in-memory channel.",
+          "recommended": true,
+          "rationale": "Cloud-native, lightweight, no external broker needed for single-instance deployments. Clean programming model. Easy to switch to Kafka/AMQP later if needed."
+        },
+        {
+          "id": "quarkus-reactive-messaging-kafka",
+          "label": "Migrate to Quarkus Reactive Messaging with Kafka",
+          "description": "Use SmallRye Reactive Messaging with Kafka connector. Convert MDBs to @Incoming methods consuming from Kafka topic.",
+          "recommended": false,
+          "rationale": "Best for production cloud deployments but requires Kafka infrastructure. May be overkill if broker topology is simple."
+        }
+      ],
+      "decision": "quarkus-reactive-messaging-memory",
+      "confidence": "needs-confirmation",
+      "reasoning": "Quarkus Reactive Messaging is more cloud-native than JMS MDBs. For this application's simple pub/sub pattern (one topic, two consumers), in-memory channels are sufficient for single-instance deployments. Migration involves: 1) Convert OrderServiceMDB.onMessage() to @Incoming(\"orders\") method, 2) Fix or remove InventoryNotificationMDB (it has WebLogic JNDI code), convert to @Incoming(\"orders\") if needed, 3) Convert ShoppingCartOrderProcessor to use @Channel Emitter<String> or @Outgoing(\"orders\"), 4) Configure channel in application.properties. However, need to confirm production deployment model: if deployed as multiple replicas with shared message broker, may need Kafka/AMQP connector instead of in-memory. Also need to determine if InventoryNotificationMDB is actually used in production."
+    },
+    
+    {
+      "category": "7_scope_architecture",
+      "applies": true,
+      "question": "This is a single-module monolith with EJB Remote interfaces and WebLogic legacy code. What scope should the Quarkus migration have?",
+      "context": {
+        "finding": "Single Maven module (26 Java classes) with mixed WebLogic/WildFly code and EJB Remote pattern",
+        "details": {
+          "modules": 1,
+          "size": "Small-to-medium (26 classes)",
+          "legacy_code": "WebLogic stubs and JNDI code from previous migration",
+          "remote_ejb": "ShippingService exposed as EJB Remote, looked up via JNDI within same app"
+        },
+        "questions": [
+          "Should entire monolith be migrated to single Quarkus application?",
+          "Should WebLogic stubs and dead code be cleaned up?",
+          "Is ShippingService Remote interface used by external applications?",
+          "Should InventoryNotificationMDB (with broken WebLogic code) be fixed or removed?"
+        ]
+      },
+      "options": [
+        {
+          "id": "migrate-monolith-cleanup",
+          "label": "Migrate entire monolith to single Quarkus application with cleanup",
+          "description": "Migrate all code to single Quarkus app. Remove WebLogic stubs (weblogic package, StartupListener). Convert EJB Remote to local CDI bean or REST endpoint if needed externally. Fix or remove InventoryNotificationMDB. Keep as monolith.",
+          "recommended": true,
+          "rationale": "Application is small enough for single Quarkus app. Cleanup removes technical debt from prior migration. Simpler than microservices decomposition. Quarkus fast startup and low memory make monoliths viable."
+        },
+        {
+          "id": "migrate-keep-legacy",
+          "label": "Migrate monolith but keep legacy code temporarily",
+          "description": "Migrate to Quarkus but retain WebLogic stubs and broken code for reference",
+          "recommended": false,
+          "rationale": "Adds unnecessary complexity. Legacy code won't function in Quarkus anyway."
+        },
+        {
+          "id": "decompose-microservices",
+          "label": "Decompose into microservices during migration",
+          "description": "Split into separate services (e.g., catalog, cart, order, shipping) during Quarkus migration",
+          "recommended": false,
+          "rationale": "Significant architectural change beyond migration scope. No clear business driver for decomposition in provided context."
+        }
+      ],
+      "decision": "migrate-monolith-cleanup",
+      "confidence": "confirmed",
+      "reasoning": "The application is appropriately sized for a single Quarkus monolith (26 classes, clear layering). Quarkus monoliths are efficient and cloud-native. Migration should include cleanup of technical debt: 1) Remove weblogic package entirely, 2) Delete StartupListener.java, 3) Migrate DataBaseMigrationStartup to use Quarkus Flyway extension callback instead of @PostConstruct, 4) Investigate InventoryNotificationMDB - if used, fix to use Reactive Messaging; if dead code, remove, 5) Convert ShippingService from EJB Remote to local CDI @ApplicationScoped bean (JNDI lookup removed), expose as REST endpoint if external access needed, 6) Convert remaining EJBs: @Stateless → @ApplicationScoped, @Stateful → @SessionScoped or custom state management. This produces a clean, maintainable Quarkus application without WebLogic/WildFly legacy patterns."
+    }
+  ],
+  
+  "summary": {
+    "migration_complexity": "medium",
+    "key_challenges": [
+      "Cleaning up WebLogic legacy code from previous migration attempt",
+      "Converting JSP-based session initialization to stateless/token-based auth",
+      "Migrating JMS Message-Driven Beans to Reactive Messaging",
+      "Removing EJB Remote pattern and JNDI lookups",
+      "Handling InventoryNotificationMDB with broken WebLogic JNDI code"
+    ],
+    "migration_impact": {
+      "code_changes": "medium",
+      "config_changes": "significant",
+      "architecture_changes": "low",
+      "infrastructure_changes": "low-to-medium"
+    },
+    "recommended_approach": "Migrate as single Quarkus monolith with cleanup of WebLogic legacy code. Use Quarkus extensions for Hibernate ORM, Flyway, OIDC/Keycloak, and Reactive Messaging. Serve frontend as static files. This is a straightforward Java EE 7 to Quarkus 3 migration with some cleanup of prior WebLogic-to-JBoss migration artifacts.",
+    "confidence_level": "high",
+    "questions_for_human": [
+      {
+        "category": "view_layer",
+        "question": "Does the AngularJS application rely on HTTP session state beyond Keycloak authentication? Can session be replaced with token-based auth?",
+        "impact": "Affects whether JSP session initialization can be removed cleanly"
+      },
+      {
+        "category": "messaging",
+        "question": "What is the production deployment model? Single instance, multiple replicas with shared broker, or Kubernetes?",
+        "impact": "Determines whether in-memory messaging is sufficient or if Kafka/AMQP is needed"
+      },
+      {
+        "category": "messaging",
+        "question": "Is InventoryNotificationMDB actually used in production, or is it dead code?",
+        "impact": "Determines whether to fix and migrate it or simply remove it"
+      },
+      {
+        "category": "architecture",
+        "question": "Is the ShippingService EJB Remote interface called by external applications, or only within this monolith?",
+        "impact": "Determines whether to expose as REST API or convert to local CDI bean"
+      }
+    ]
+  }
+}
