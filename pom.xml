@@ -67,6 +67,12 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-flyway</artifactId>
         </dependency>
+
+        <!-- JSON-P -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jsonp</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>ROOT</finalName>
