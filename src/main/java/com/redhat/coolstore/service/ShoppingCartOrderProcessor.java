@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import jakarta.ejb.Stateless;
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.jms.JMSContext;
 import jakarta.jms.Topic;
 
