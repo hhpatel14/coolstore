@@ -1,0 +1,118 @@
+{
+  "_template_canary": "QNR-CANARY-7f3a9c21",
+  "detection": {
+    "language": "java",
+    "version": "1.8",
+    "frameworks": [
+      "javaee-web-api-7.0",
+      "javaee-api-7.0",
+      "jboss-jms-api_2.0_spec",
+      "flyway-core-4.1.2",
+      "jboss-rmi-api_1.0_spec",
+      "jpa-2.1",
+      "hibernate",
+      "cdi-1.1",
+      "jax-rs",
+      "ejb-3.2",
+      "angularjs",
+      "keycloak"
+    ],
+    "build_tool": "maven",
+    "app_server": "jboss-eap-7.4",
+    "source_file_count": 20
+  },
+  "decisions": [
+    {
+      "id": 1,
+      "question": "The application contains vendored WebLogic stub classes (weblogic.application.ApplicationLifecycleListener, weblogic.i18n.logging.NonCatalogLogger) in src/main/java/weblogic/*. These appear to be stub implementations. What is the purpose of these classes and how should they be handled?",
+      "options": [
+        "A) Remove them - they are unused stubs from a previous migration attempt",
+        "B) Replace with Quarkus lifecycle observers and standard logging",
+        "C) Keep as-is - they provide compatibility layer",
+        "D) Investigate usage in the codebase before deciding"
+      ],
+      "recommendation": "D",
+      "chosen": "D",
+      "reasoning": "These are vendored stub implementations of WebLogic APIs found in src/main/java. The stub classes contain empty method bodies, suggesting they may be compatibility shims from a previous migration. However, without searching the entire codebase for references, it's unclear if any code depends on them. The InventoryNotificationMDB references weblogic.jndi.WLInitialContextFactory in a JNDI lookup, which suggests there may be WebLogic-specific code patterns. Need confirmation on whether these stubs are actively used or can be safely removed."
+    },
+    {
+      "id": 2,
+      "question": "The application has a view layer with JSP files (index.jsp, health.jsp) that primarily serve an AngularJS single-page application. The actual UI is client-side JavaScript. What should be the view strategy for Quarkus?",
+      "options": [
+        "A) Keep JSP support using Quarkus extensions and serve the existing AngularJS app",
+        "B) Convert to pure REST API-only backend, serve static files directly (recommended for SPA)",
+        "C) Migrate to Qute templating engine for server-side rendering",
+        "D) Migrate to a modern JavaScript framework (React, Vue) and serve as static content"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "The JSP files are minimal - index.jsp primarily loads AngularJS libraries and bootstraps the SPA, while health.jsp is a simple health check. The real application UI is an AngularJS single-page application with REST endpoints at /services/*. This is already architecturally an API-driven SPA. Quarkus excels at REST API backends. The simplest migration path is to serve the static HTML/JS/CSS files directly and keep the REST API endpoints. This aligns with modern microservices architecture and eliminates the JSP dependency entirely."
+    },
+    {
+      "id": 3,
+      "question": "The application uses Keycloak for authentication with configuration in keycloak.json. How should authentication be handled in Quarkus?",
+      "options": [
+        "A) Use Quarkus OIDC extension with Keycloak adapter (native Quarkus support)",
+        "B) Keep legacy Keycloak adapters from Java EE",
+        "C) Migrate to a different authentication solution",
+        "D) Implement custom authentication logic"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "Quarkus has first-class support for OIDC and Keycloak through the quarkus-oidc extension. The existing keycloak.json configuration can be migrated to application.properties with Quarkus-specific properties (quarkus.oidc.*). The current setup uses Keycloak realm 'eap' on localhost:8081 with resource 'eap-app' as a public client. This is a standard OIDC configuration that maps cleanly to Quarkus OIDC extension. The Quarkus approach is more modern, supports native compilation, and is the recommended path for Keycloak integration in Quarkus 3."
+    },
+    {
+      "id": 4,
+      "question": "The application uses JMS with Message-Driven Beans (OrderServiceMDB, InventoryNotificationMDB) listening to 'topic/orders'. One MDB uses standard @MessageDriven annotation, while InventoryNotificationMDB has WebLogic-specific JNDI lookups. What messaging approach should be used in Quarkus?",
+      "options": [
+        "A) Use Quarkus SmallRye Reactive Messaging with Kafka (modern cloud-native approach)",
+        "B) Use Quarkus Artemis JMS extension to preserve JMS API compatibility",
+        "C) Use Quarkus Qpid JMS extension for AMQP protocol",
+        "D) Migrate to in-memory event bus (Vert.x Event Bus)"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "The application uses JMS Topics with two MDBs consuming from 'topic/orders'. The messaging pattern is publish-subscribe (topic-based). OrderServiceMDB uses standard Java EE @MessageDriven beans, while InventoryNotificationMDB has WebLogic-specific initialization code that would need refactoring. Quarkus supports JMS through the Artemis extension (quarkus-artemis-jms), which would preserve the existing JMS API and minimize code changes. Since the README shows the app is configured with ActiveMQ (JBoss's messaging), Artemis is the direct successor. While Reactive Messaging + Kafka is more modern, it would require significant refactoring of the message handling code. Artemis JMS provides the smoothest migration path."
+    },
+    {
+      "id": 5,
+      "question": "The ShoppingCartService uses Remote EJB lookups to call ShippingService via JNDI (ejb:/ROOT/ShippingService!...). This is a local remote call pattern. How should this be handled in Quarkus?",
+      "options": [
+        "A) Replace with direct CDI injection - both services are in the same deployment",
+        "B) Use Quarkus gRPC for inter-service communication",
+        "C) Keep remote EJB using Quarkus EJB Client extension",
+        "D) Expose ShippingService as REST endpoint and call via HTTP"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "ShippingService is annotated with @Remote and @Stateless, and ShoppingCartService looks it up via JNDI using WildFly naming client. However, both services are in the same monolith WAR deployment. This is a 'local remote call' pattern - using remote EJB semantics for local calls, possibly to enable future distribution or for transaction propagation. In Quarkus, since both services are in the same application, the simplest and most efficient approach is direct CDI @Inject. ShippingService can remain a CDI bean, and ShoppingCartService can inject it directly. This eliminates the JNDI lookup overhead while preserving the same functionality. If future distribution is needed, the services can be split into separate Quarkus applications with REST communication."
+    },
+    {
+      "id": 6,
+      "question": "The application uses PostgreSQL with JNDI datasource (java:jboss/datasources/CoolstoreDS) and JPA/Hibernate. The README shows manual datasource configuration in JBoss CLI. How should database configuration be handled in Quarkus?",
+      "options": [
+        "A) Use Quarkus datasource configuration in application.properties (recommended)",
+        "B) Keep JNDI datasource configuration for compatibility",
+        "C) Migrate to Quarkus Reactive SQL clients",
+        "D) Use external JNDI server for datasource lookup"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "The app uses JPA 2.1 with Hibernate on PostgreSQL via JNDI datasource 'java:jboss/datasources/CoolstoreDS'. The persistence.xml references this JNDI name, and the README shows manual CLI configuration of the datasource in JBoss. Quarkus simplifies this significantly - datasources are configured in application.properties with quarkus.datasource.* properties, and JPA is supported via quarkus-hibernate-orm extension. The JNDI name can be eliminated; Quarkus automatically configures the datasource for JPA. The existing JPA entities (@Entity, @Table, etc.) will work with minimal changes. Flyway migrations (V1_1, V1_2) are also supported via quarkus-flyway extension. This is the standard Quarkus approach and eliminates application server-specific configuration."
+    },
+    {
+      "id": 7,
+      "question": "The application is a single-module monolith with REST endpoints, JSP views, multiple services, JPA entities, and messaging. What is the scope of the migration?",
+      "options": [
+        "A) Migrate entire monolith to Quarkus as single application (monolith-to-monolith)",
+        "B) Decompose into microservices during migration (cart, catalog, order services)",
+        "C) Migrate incrementally - start with REST API only, add messaging later",
+        "D) Create parallel Quarkus version, migrate traffic gradually"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "The application is called 'coolstore-monolith' with a clear single-module structure. It packages as a single WAR file (finalName: ROOT) containing all layers - REST endpoints (CartEndpoint, OrderEndpoint, ProductEndpoint), services (CatalogService, OrderService, ShoppingCartService), persistence (JPA entities), and messaging (MDBs). While the architecture has clear service boundaries, there are no current distribution requirements, and the README shows it's designed for clustering (standalone-full-ha.xml with multiple nodes). The most pragmatic approach is a monolith-to-monolith migration - migrate the entire application to Quarkus as a single deployable unit. This preserves the current architecture while gaining Quarkus benefits (fast startup, low memory, native compilation). Microservices decomposition is a separate architectural decision that can be made after migration."
+    }
+  ],
+  "mode": "non-interactive"
+}
