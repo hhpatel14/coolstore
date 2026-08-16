@@ -1,0 +1,342 @@
+{
+  "_template_canary": "EXE-CANARY-8d3a2044",
+  "status": "completed",
+  "steps": [
+    {
+      "id": 1,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "71537af",
+      "error": null
+    },
+    {
+      "id": 2,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "7c4e441",
+      "error": null
+    },
+    {
+      "id": 3,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "b03759a",
+      "error": null
+    },
+    {
+      "id": 4,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "12668a2",
+      "error": null
+    },
+    {
+      "id": 5,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "a5ad466",
+      "error": null
+    },
+    {
+      "id": 6,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "7e33492",
+      "error": null
+    },
+    {
+      "id": 7,
+      "file": "src/main/resources/application.properties",
+      "action": "CREATE",
+      "status": "applied",
+      "commit": "ab21cb5",
+      "error": null
+    },
+    {
+      "id": 8,
+      "file": "src/main/resources/application.properties",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "2663f19",
+      "error": null
+    },
+    {
+      "id": 9,
+      "file": "src/main/resources/application.properties",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "4549342",
+      "error": null
+    },
+    {
+      "id": 10,
+      "file": "src/main/resources/META-INF/persistence.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "40f2620",
+      "error": null
+    },
+    {
+      "id": 11,
+      "file": "src/main/webapp/WEB-INF/web.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "d4420d9",
+      "error": null
+    },
+    {
+      "id": 12,
+      "file": "src/main/webapp/WEB-INF/beans.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "a932a19",
+      "error": null
+    },
+    {
+      "id": 13,
+      "file": "src/main/webapp/keycloak.json",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "cba5e43",
+      "error": null
+    },
+    {
+      "id": 14,
+      "file": "src/main/java/com/redhat/coolstore/service/ShoppingCartService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "b0e6917",
+      "error": null
+    },
+    {
+      "id": 15,
+      "file": "src/main/java/com/redhat/coolstore/service/ShoppingCartService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "d294766",
+      "error": null
+    },
+    {
+      "id": 16,
+      "file": "src/main/java/com/redhat/coolstore/service/ShippingService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "cb99f28",
+      "error": null
+    },
+    {
+      "id": 17,
+      "file": "src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "f293f9e",
+      "error": null
+    },
+    {
+      "id": 18,
+      "file": "src/main/java/com/redhat/coolstore/service/CatalogService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "339ddfc",
+      "error": null
+    },
+    {
+      "id": 19,
+      "file": "src/main/java/com/redhat/coolstore/service/OrderService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "339ddfc",
+      "error": null
+    },
+    {
+      "id": 20,
+      "file": "src/main/java/com/redhat/coolstore/service/ProductService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "339ddfc",
+      "error": null
+    },
+    {
+      "id": 21,
+      "file": "src/main/java/com/redhat/coolstore/service/PromoService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "339ddfc",
+      "error": null
+    },
+    {
+      "id": 22,
+      "file": "src/main/java/com/redhat/coolstore/rest/CartEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "684fce6",
+      "error": null
+    },
+    {
+      "id": 23,
+      "file": "src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "684fce6",
+      "error": null
+    },
+    {
+      "id": 24,
+      "file": "src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "684fce6",
+      "error": null
+    },
+    {
+      "id": 25,
+      "file": "src/main/java/com/redhat/coolstore/rest/RestApplication.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "684fce6",
+      "error": null
+    },
+    {
+      "id": 26,
+      "file": "src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3a7b359",
+      "error": null
+    },
+    {
+      "id": 27,
+      "file": "src/main/java/com/redhat/coolstore/model/InventoryEntity.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3a7b359",
+      "error": null
+    },
+    {
+      "id": 28,
+      "file": "src/main/java/com/redhat/coolstore/model/Order.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3a7b359",
+      "error": null
+    },
+    {
+      "id": 29,
+      "file": "src/main/java/com/redhat/coolstore/model/OrderItem.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3a7b359",
+      "error": null
+    },
+    {
+      "id": 30,
+      "file": "src/main/java/com/redhat/coolstore/utils/Producers.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3c89b25",
+      "error": null
+    },
+    {
+      "id": 31,
+      "file": "src/main/java/com/redhat/coolstore/persistence/Resources.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "3c89b25",
+      "error": null
+    },
+    {
+      "id": 32,
+      "file": "src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "f93b7fb",
+      "error": null
+    },
+    {
+      "id": 33,
+      "file": "src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "d9894e9",
+      "error": null
+    },
+    {
+      "id": 34,
+      "file": "src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "4cad1cf",
+      "error": null
+    },
+    {
+      "id": 35,
+      "file": "src/main/java/com/redhat/coolstore/utils/StartupListener.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "4650bb7",
+      "error": null
+    },
+    {
+      "id": 36,
+      "file": "src/main/java/com/redhat/coolstore/utils/DataBaseMigrationStartup.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "8c85652",
+      "error": null
+    },
+    {
+      "id": 37,
+      "file": "src/main/java/weblogic/application/ApplicationLifecycleEvent.java",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "5504d73",
+      "error": null
+    },
+    {
+      "id": 38,
+      "file": "src/main/java/weblogic/application/ApplicationLifecycleListener.java",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "0405256",
+      "error": null
+    },
+    {
+      "id": 39,
+      "file": "src/main/java/weblogic/i18n/logging/NonCatalogLogger.java",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "799d7e9",
+      "error": null
+    },
+    {
+      "id": 40,
+      "file": "src/main/java (all files)",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "5482a76",
+      "error": null
+    },
+    {
+      "id": 41,
+      "file": "src/main/webapp → src/main/resources/META-INF/resources",
+      "action": "MODIFY",
+      "status": "applied",
+      "commit": "56c1cda",
+      "error": null
+    },
+    {
+      "id": 42,
+      "file": "src/main/webapp",
+      "action": "DELETE",
+      "status": "applied",
+      "commit": "4698dd5",
+      "error": null
+    }
+  ]
+}
