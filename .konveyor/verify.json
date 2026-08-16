@@ -1,0 +1,34 @@
+{
+  "_template_canary": "VRF-CANARY-5e7b1399",
+  "stage": "verify",
+  "status": "failed",
+  "build": {
+    "status": "failed",
+    "fix_iterations": 5,
+    "remaining_errors": [
+      "Unsatisfied dependency for type jakarta.jms.JMSContext in ShoppingCartOrderProcessor - Artemis JMS extension needs additional configuration or JMSContext producer",
+      "Ambiguous dependencies for EntityManager in CatalogService - conflict between custom producer in Resources.java and Quarkus synthetic bean",
+      "Ambiguous dependencies for EntityManager in OrderService - conflict between custom producer in Resources.java and Quarkus synthetic bean",
+      "Ambiguous dependencies for EntityManager in Resources.java - conflict between custom producer and Quarkus synthetic bean"
+    ]
+  },
+  "tests": {
+    "status": "skipped",
+    "passed": 0,
+    "failed": 0,
+    "total": 0,
+    "failures": []
+  },
+  "runtime": {
+    "status": "skipped",
+    "health_check": "skipped",
+    "startup_time_ms": 0,
+    "smoke_tests": {
+      "passed": 0,
+      "failed": 0
+    },
+    "log_warnings": [],
+    "clean_shutdown": false
+  },
+  "summary": "Build failed after 5 fix iterations with CDI deployment errors (unsatisfied JMSContext dependency and ambiguous EntityManager injection); tests and runtime verification skipped."
+}
