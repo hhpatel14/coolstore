@@ -1,0 +1,264 @@
+{
+  "status": "completed",
+  "steps": [
+    {
+      "id": 1,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 2,
+      "file": "pom.xml",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 3,
+      "file": "src/main/resources/application.properties",
+      "action": "CREATE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 4,
+      "file": "src/main/resources/META-INF/persistence.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 5,
+      "file": "src/main/webapp/WEB-INF/web.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 6,
+      "file": "src/main/webapp/WEB-INF/beans.xml",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 7,
+      "file": "src/main/java/com/redhat/coolstore/model/CatalogItemEntity.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 8,
+      "file": "src/main/java/com/redhat/coolstore/model/InventoryEntity.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 9,
+      "file": "src/main/java/com/redhat/coolstore/model/Order.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 10,
+      "file": "src/main/java/com/redhat/coolstore/model/OrderItem.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 11,
+      "file": "src/main/java/com/redhat/coolstore/model/Product.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 12,
+      "file": "src/main/java/com/redhat/coolstore/model/Promotion.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 13,
+      "file": "src/main/java/com/redhat/coolstore/model/ShoppingCart.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 14,
+      "file": "src/main/java/com/redhat/coolstore/model/ShoppingCartItem.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 15,
+      "file": "src/main/java/com/redhat/coolstore/persistence/Resources.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 16,
+      "file": "src/main/java/com/redhat/coolstore/rest/CartEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 17,
+      "file": "src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 18,
+      "file": "src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 19,
+      "file": "src/main/java/com/redhat/coolstore/rest/RestApplication.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 20,
+      "file": "src/main/java/com/redhat/coolstore/service/CatalogService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 21,
+      "file": "src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 22,
+      "file": "src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 23,
+      "file": "src/main/java/com/redhat/coolstore/service/OrderService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 24,
+      "file": "src/main/java/com/redhat/coolstore/service/ProductService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 25,
+      "file": "src/main/java/com/redhat/coolstore/service/PromoService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 26,
+      "file": "src/main/java/com/redhat/coolstore/service/ShippingService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 27,
+      "file": "src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 28,
+      "file": "src/main/java/com/redhat/coolstore/service/ShoppingCartService.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 29,
+      "file": "src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 30,
+      "file": "src/main/java/com/redhat/coolstore/utils/DataBaseMigrationStartup.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 31,
+      "file": "src/main/java/com/redhat/coolstore/utils/Producers.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 32,
+      "file": "src/main/java/com/redhat/coolstore/utils/StartupListener.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 33,
+      "file": "src/main/java/com/redhat/coolstore/utils/Transformers.java",
+      "action": "MODIFY",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 34,
+      "file": "src/main/java/weblogic/application/ApplicationLifecycleEvent.java",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 35,
+      "file": "src/main/java/weblogic/application/ApplicationLifecycleListener.java",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 36,
+      "file": "src/main/java/weblogic/i18n/logging/NonCatalogLogger.java",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    },
+    {
+      "id": 37,
+      "file": "src/main/java/weblogic/",
+      "action": "DELETE",
+      "status": "applied",
+      "error": null
+    }
+  ]
+}
