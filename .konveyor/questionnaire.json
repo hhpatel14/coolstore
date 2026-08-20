@@ -1,0 +1,115 @@
+{
+  "detection": {
+    "language": "java",
+    "version": "1.8",
+    "frameworks": [
+      "javaee-7",
+      "jpa-2.1",
+      "hibernate",
+      "cdi-1.1",
+      "jax-rs-2.0",
+      "ejb-3.2",
+      "jms-2.0",
+      "jsp-2.3",
+      "flyway-4.1.2",
+      "keycloak"
+    ],
+    "build_tool": "maven",
+    "app_server": "weblogic-with-jboss-references",
+    "source_file_count": 30
+  },
+  "decisions": [
+    {
+      "id": 1,
+      "question": "The codebase contains vendored WebLogic-specific classes (weblogic.application.ApplicationLifecycleListener, weblogic.jndi.WLInitialContextFactory) under src/main/java/weblogic/, but also references JBoss/WildFly naming (org.wildfly.naming.client.WildFlyInitialContextFactory) and datasources (java:jboss/datasources/CoolstoreDS). What is the actual source application server?",
+      "options": [
+        "A) Oracle WebLogic - treat the JBoss references as migration artifacts from a previous attempt",
+        "B) JBoss EAP/WildFly - treat the WebLogic classes as stub implementations for compatibility",
+        "C) Mixed/hybrid deployment - the app has been partially migrated or runs on both",
+        "D) Unknown - need to examine deployment descriptors or ask the application owner"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "The persistence.xml references 'java:jboss/datasources/CoolstoreDS' and ShoppingCartService uses 'org.wildfly.naming.client.WildFlyInitialContextFactory' for JNDI lookups. The WebLogic classes appear to be locally vendored stub implementations (they're in src/main/java, not external dependencies). The build produces a WAR file with no WebLogic-specific deployment descriptors, and uses JBoss-specific JMS/RMI API specs. This pattern suggests the app currently runs on JBoss EAP/WildFly with stub WebLogic classes for API compatibility."
+    },
+    {
+      "id": 2,
+      "question": "The application uses JSP-based views (index.jsp with embedded scriptlet '<% request.getSession(true); %>') combined with an AngularJS frontend. What should be the view layer strategy for Quarkus 3?",
+      "options": [
+        "A) Convert to Qute templates - replace JSPs with Quarkus-native templating",
+        "B) Keep JSPs using quarkus-undertow extension - maintain server-rendered views with minimal changes",
+        "C) Convert to API-only backend - remove JSPs, serve static HTML/JS, make the Angular frontend fully decoupled",
+        "D) Migrate to Quarkus with Quinoa - integrate the frontend build into Quarkus while keeping API-based architecture"
+      ],
+      "recommendation": "C",
+      "chosen": "C",
+      "reasoning": "The JSP files are minimal (index.jsp is primarily an AngularJS app loader, health.jsp is trivial). The app already has a clean REST API layer (CartEndpoint, ProductEndpoint, OrderEndpoint) under /services path. The frontend is already decoupled using AngularJS with REST calls. Converting to a pure API backend aligns with Quarkus's cloud-native philosophy and eliminates the complexity of JSP support. The migration effort is low since the REST APIs already exist."
+    },
+    {
+      "id": 3,
+      "question": "The application uses Keycloak for authentication (keycloak.json with realm 'eap', auth-server-url 'http://localhost:8081/'). How should authentication be handled in Quarkus 3?",
+      "options": [
+        "A) Use quarkus-oidc extension - Quarkus native OpenID Connect integration with Keycloak",
+        "B) Use quarkus-keycloak-authorization extension - direct Keycloak adapter for Quarkus",
+        "C) Remove authentication - make it a separate concern handled by an API gateway or service mesh",
+        "D) Switch to a different auth provider like OAuth2 or JWT without Keycloak"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "Quarkus 3 uses quarkus-oidc as the recommended approach for Keycloak integration (the older quarkus-keycloak-authorization is deprecated). The existing keycloak.json configuration can be migrated to application.properties with OIDC settings. This maintains Keycloak as the identity provider while using Quarkus's native, maintained extension."
+    },
+    {
+      "id": 4,
+      "question": "The persistence layer uses JNDI datasource lookup ('java:jboss/datasources/CoolstoreDS') and JPA 2.1 with Hibernate. The actual database type is not specified in the code. What should be the database and persistence strategy?",
+      "options": [
+        "A) Use H2 in-memory database - simple for development, matches typical embedded DB pattern",
+        "B) Use PostgreSQL - common production database, well-supported by Quarkus",
+        "C) Keep the existing production database (unknown type) - configure Quarkus datasource to match",
+        "D) Ask application owner for production database details before choosing persistence configuration"
+      ],
+      "recommendation": "D",
+      "chosen": "D",
+      "reasoning": "The code shows no explicit database type - only JNDI datasource reference and Flyway migrations with generic SQL. The persistence.xml uses 'javax.persistence.schema-generation.database.action=none', relying on Flyway migrations. Without knowing the production database (could be Oracle, PostgreSQL, MySQL, etc.), we risk incompatibility. This is critical information that changes the migration approach (different Quarkus JDBC extensions, potential SQL dialect issues in migrations)."
+    },
+    {
+      "id": 5,
+      "question": "The application uses JMS with Message-Driven Beans (OrderServiceMDB, InventoryNotificationMDB) listening to 'topic/orders'. The InventoryNotificationMDB contains WebLogic-specific JNDI setup ('weblogic.jndi.WLInitialContextFactory', 't3://localhost:7001'). How should messaging be handled in Quarkus 3?",
+      "options": [
+        "A) Use SmallRye Reactive Messaging with in-memory channels - simplest, no external broker needed",
+        "B) Use quarkus-artemis-jms - Quarkus JMS support with Apache Artemis broker (JBoss default)",
+        "C) Use quarkus-smallrye-reactive-messaging-kafka - migrate to Kafka for cloud-native messaging",
+        "D) Use quarkus-qpid-jms with external message broker - maintain JMS API compatibility with different broker"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "The app currently uses JMS topics with MDBs, suggesting a JBoss/WildFly environment likely using integrated HornetQ/Artemis. The OrderServiceMDB uses standard JMS annotations, making it straightforward to migrate. The InventoryNotificationMDB has problematic WebLogic JNDI code that needs replacement. Using quarkus-artemis-jms maintains JMS API compatibility while moving to Quarkus, with minimal code changes to the MDB message handling logic. The @MessageDriven annotations can be replaced with @Incoming from SmallRye Reactive Messaging or kept with Artemis JMS consumer configuration."
+    },
+    {
+      "id": 6,
+      "question": "The ShoppingCartService uses EJB remote calls to ShippingService via JNDI lookup ('ejb:/ROOT/ShippingService!' + ShippingServiceRemote.class.getName()). How should this remote EJB pattern be migrated?",
+      "options": [
+        "A) Convert to local CDI injection - make ShippingService a local bean if it runs in the same Quarkus instance",
+        "B) Convert to REST API call - expose ShippingService as a REST endpoint and use REST client",
+        "C) Use Quarkus gRPC - migrate to gRPC for efficient remote calls",
+        "D) Keep using remote EJB with quarkus-elytron-security-jdbc - maintain EJB remoting capabilities"
+      ],
+      "recommendation": "A",
+      "chosen": "A",
+      "reasoning": "Examining the code, ShippingService is defined in the same codebase as ShoppingCartService (both in com.redhat.coolstore.service package). The remote EJB lookup appears to be over-engineering - it's a local service call made via remote protocol. The @Stateless and @Remote annotations suggest this was set up for potential distribution, but there's no evidence of actual distributed deployment. Converting to simple CDI @ApplicationScoped injection eliminates the JNDI complexity, improves performance, and aligns with Quarkus's dependency injection model. If true distribution is needed later, the service can be extracted and exposed via REST."
+    },
+    {
+      "id": 7,
+      "question": "The migration target is specified as 'Quarkus 3' but without a specific minor version. Quarkus 3.x has had multiple releases with different features and compatibility. What specific target version should be used?",
+      "options": [
+        "A) Quarkus 3.0.x - first major release, stable but older",
+        "B) Quarkus 3.2.x LTS - Long Term Support version with extended maintenance",
+        "C) Quarkus 3.8+ - latest stable release with newest features",
+        "D) Quarkus 3.15+ - most recent with Hibernate ORM 6.4 and latest improvements"
+      ],
+      "recommendation": "B",
+      "chosen": "B",
+      "reasoning": "For enterprise migrations, Quarkus 3.2.x LTS is recommended as the target. It provides long-term support (minimum 12 months maintenance), stability for production deployments, and sufficient time for testing. While newer versions offer more features, LTS reduces risk of compatibility issues and provides a stable foundation. The application can be upgraded to newer Quarkus versions later after successful migration to 3.2 LTS."
+    }
+  ],
+  "mode": "non-interactive"
+}
