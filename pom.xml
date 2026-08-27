@@ -13,7 +13,7 @@
         <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
         <project.encoding>UTF-8</project.encoding>
         <maven.test.skip>true</maven.test.skip>
-        <quarkus.platform.version>3.2.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>3.8.6</quarkus.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -42,6 +42,10 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-reactive-messaging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>smallrye-reactive-messaging-in-memory</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
