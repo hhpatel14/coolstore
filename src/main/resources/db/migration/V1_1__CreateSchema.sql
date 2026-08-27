@@ -39,4 +39,5 @@ alter table ORDER_ITEMS
     foreign key (ORDER_ID)
     references ORDERS;
 
-create sequence hibernate_sequence;
+create sequence order_sequence start with 1000;
+create sequence orderitem_sequence start with 1000;
