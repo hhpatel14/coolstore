@@ -1,0 +1,3 @@
+-- Create sequences for Hibernate 6 compatibility
+CREATE SEQUENCE IF NOT EXISTS order_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS orderitem_seq START WITH 1 INCREMENT BY 1;
