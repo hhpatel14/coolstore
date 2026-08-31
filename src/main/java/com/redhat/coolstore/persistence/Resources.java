@@ -1,18 +1,9 @@
 package com.redhat.coolstore.persistence;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.enterprise.context.Dependent;
 
 @Dependent
 public class Resources {
-
-    @PersistenceContext
-    private EntityManager em;
-
-    @Produces
-    public EntityManager getEntityManager() {
-        return em;
-    }
+    // EntityManager producer removed - Quarkus provides EntityManager beans automatically via CDI
+    // Services can now directly @Inject EntityManager
 }
