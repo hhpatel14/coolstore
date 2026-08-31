@@ -16,7 +16,7 @@ public class OrderServiceMDB {
 	@Inject
 	CatalogService catalogService;
 
-	@Incoming("orders")
+	@Incoming("orders-in")
 	public void onMessage(String orderStr) {
 		System.out.println("\nMessage recd !");
 		System.out.println("Received order: " + orderStr);

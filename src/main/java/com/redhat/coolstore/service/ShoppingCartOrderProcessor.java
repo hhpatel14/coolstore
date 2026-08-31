@@ -16,7 +16,7 @@ public class ShoppingCartOrderProcessor  {
     Logger log;
 
     @Inject
-    @Channel("orders")
+    @Channel("orders-out")
     Emitter<String> ordersEmitter;
   
     public void  process(ShoppingCart cart) {

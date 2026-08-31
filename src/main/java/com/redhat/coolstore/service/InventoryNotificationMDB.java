@@ -15,7 +15,7 @@ public class InventoryNotificationMDB {
     @Inject
     private CatalogService catalogService;
 
-    @Incoming("orders")
+    @Incoming("orders-in")
     public void onMessage(String orderStr) {
         System.out.println("received message inventory");
         Order order = Transformers.jsonToOrder(orderStr);
