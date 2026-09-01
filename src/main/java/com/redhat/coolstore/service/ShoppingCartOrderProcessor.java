@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import io.smallrye.reactive.messaging.annotations.Channel;
+import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 import com.redhat.coolstore.model.ShoppingCart;
