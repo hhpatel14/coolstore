@@ -21,8 +21,8 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = -1L;
 
 	@Id
-	@GeneratedValue(strategy = javax.persistence.GenerationType.SEQUENCE, generator = "order_seq")
-	@javax.persistence.SequenceGenerator(name = "order_seq", sequenceName = "order_seq", allocationSize = 1)
+	@GeneratedValue(strategy = jakarta.persistence.GenerationType.SEQUENCE, generator = "order_seq")
+	@jakarta.persistence.SequenceGenerator(name = "order_seq", sequenceName = "order_seq", allocationSize = 1)
 	private long orderId;
 
 	private String customerName;

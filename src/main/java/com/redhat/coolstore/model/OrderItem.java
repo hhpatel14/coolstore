@@ -15,8 +15,8 @@ public class OrderItem implements Serializable {
 
 	@Id
 	@Column(name="ID")
-	@GeneratedValue(strategy = javax.persistence.GenerationType.SEQUENCE, generator = "orderitem_seq")
-	@javax.persistence.SequenceGenerator(name = "orderitem_seq", sequenceName = "orderitem_seq", allocationSize = 1)
+	@GeneratedValue(strategy = jakarta.persistence.GenerationType.SEQUENCE, generator = "orderitem_seq")
+	@jakarta.persistence.SequenceGenerator(name = "orderitem_seq", sequenceName = "orderitem_seq", allocationSize = 1)
 	private long id;
 
 	private int quantity;
