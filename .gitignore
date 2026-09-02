@@ -12,3 +12,8 @@ target/
 *.tmp
 *.swp
 *.bak
+
+# Quarkus specific
+.quarkus/
+target/quarkus-app/
+*.log
